@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marwadi Namkeen Shopkeeper Admin Panel</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            saffron: {
+              50: '#fffbf0',
+              100: '#fffae0',
+              500: '#F28500',
+              600: '#E07B00',
+              700: '#C76D00',
+            },
+            brandred: {
+              50: '#fff5f5',
+              100: '#ffe3e3',
+              500: '#8B0000',
+              600: '#730000',
+              700: '#5C0000',
+            },
+            gold: {
+              500: '#D4AF37',
+              600: '#C59B27',
+              700: '#A37F1F',
+            },
+            dark: '#1A0D00'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* Custom CSS for dashboard visual elegance */
+    .admin-sidebar-btn-active {
+      background: rgba(242, 133, 0, 0.1);
+      color: #F28500;
+      border-left: 4px solid #F28500;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body class="page-fade-in antialiased bg-gray-50/50">
+
+  <!-- ADMIN AUTHENTICATION CONTAINER (LOGIN SCREEN) -->
+  <div id="admin-login-container" class="fixed inset-0 bg-dark z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-6 border-t-8 border-brandred-600">
+      <div class="text-center space-y-2">
+        <div class="w-16 h-16 rounded-full bg-saffron-gradient flex items-center justify-center border-2 border-gold-500 shadow-md mx-auto">
+          <span class="text-white font-bold text-2xl font-tiro">म</span>
+        </div>
+        <h2 class="text-2xl font-bold font-tiro text-brandred-600">Shopkeeper Admin Login</h2>
+        <p class="text-xs text-gray-400">मारवाड़ी नमकीन — Admin Dashboard</p>
+      </div>
+
+      <form id="admin-login-form" class="space-y-4 text-xs text-gray-700" onsubmit="handleAdminLogin(event)">
+        <div class="space-y-1.5">
+          <label class="font-bold uppercase">Email Address</label>
+          <input type="email" id="admin-email-input" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required placeholder="E.g. pareekgautam152@gmail.com">
+        </div>
+        <div class="space-y-1.5">
+          <label class="font-bold uppercase">Password</label>
+          <input type="password" id="admin-password-input" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required placeholder="••••••••">
+        </div>
+        <div class="flex justify-between items-center pt-2">
+          <button type="button" onclick="showForgotModal()" class="text-[10px] text-gray-400 font-semibold hover:underline">Forgot Password?</button>
+        </div>
+        <button type="submit" class="w-full bg-saffron-500 hover:bg-saffron-600 text-white font-bold py-3.5 rounded-full shadow-md uppercase tracking-wider transition-colors">Login Securely</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FORGOT PASSWORD MODAL -->
+  <div id="forgot-password-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full mx-4 text-center space-y-4">
+      <h3 class="font-bold text-sm text-brandred-600">Password Recovery</h3>
+      <p class="text-xs text-gray-500 leading-relaxed font-tiro">सुरक्षा कारणों से, यदि आप पासवर्ड भूल गए हैं, तो कृपया रीसेट लिंक के लिए अपने पंजीकृत मोबाइल नंबर (+91 8107116916) या ईमेल (pareekgautam152@gmail.com) पर संपर्क करें।</p>
+      <button onclick="closeForgotModal()" class="bg-saffron-500 text-white font-bold px-6 py-2 rounded-full text-xs hover:bg-saffron-600">Close</button>
+    </div>
+  </div>
+
+  <!-- MAIN ADMIN DASHBOARD WORKSPACE (HIDDEN BY DEFAULT) -->
+  <div id="admin-dashboard-layout" class="min-h-screen flex flex-col hidden">
+    
+    <!-- Top Nav Header -->
+    <header class="sticky top-0 z-30 glass-nav shadow-sm h-20 flex items-center justify-between px-6 sm:px-8 border-b">
+      <!-- Left side: logo -->
+      <a href="index.html" class="flex items-center space-x-3 group">
+        <div class="w-10 h-10 rounded-full bg-saffron-gradient flex items-center justify-center border-2 border-gold-500">
+          <span class="text-white font-bold text-lg font-tiro">म</span>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold font-tiro text-brandred-600">मारवाड़ी नमकीन</h1>
+          <p class="text-[9px] text-gray-500 font-tiro">Shopkeeper Dashboard</p>
+        </div>
+      </a>
+
+      <!-- Right side: Notifications bell & Logout -->
+      <div class="flex items-center space-x-6 text-xs font-bold text-gray-600">
+        
+        <!-- Notifications dropdown trigger -->
+        <div class="relative">
+          <button onclick="toggleAlertsFeed()" class="relative p-1 text-gray-500 hover:text-saffron-600 focus:outline-none">
+            <span class="text-lg">🔔</span>
+            <span id="alerts-count-badge" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white font-bold text-[8px] w-4.5 h-4.5 rounded-full flex items-center justify-center border border-white hidden">0</span>
+          </button>
+          <!-- Alerts Feed Dropdown -->
+          <div id="alerts-feed-dropdown" class="absolute right-0 mt-3 w-80 bg-white border border-gray-100 rounded-2xl shadow-2xl py-3 text-xs text-gray-700 hidden max-h-96 overflow-y-auto">
+            <div class="px-4 py-2 border-b font-bold text-brandred-600 flex justify-between items-center">
+              <span>Admin Notifications</span>
+              <button onclick="clearAlertsFeed()" class="text-[9px] text-gray-400 hover:underline">Clear All</button>
+            </div>
+            <div class="divide-y" id="alerts-feed-list">
+              <!-- Dynamically populated alerts -->
+            </div>
+          </div>
+        </div>
+
+        <button onclick="handleAdminPanelLogout()" class="bg-red-50 text-red-600 px-4 py-2 rounded-full border border-red-100 hover:bg-red-100 transition-colors">Logout</button>
+      </div>
+    </header>
+
+    <!-- Side Menu + Content Grid -->
+    <div class="flex-grow flex flex-col lg:flex-row">
+      <!-- Left Navigation Drawer -->
+      <aside class="w-full lg:w-64 bg-white border-r py-6 flex flex-col space-y-1.5 text-xs font-bold text-gray-600">
+        <button onclick="switchAdminTab('overview')" id="aside-btn-overview" class="admin-sidebar-btn-active text-left w-full px-6 py-3.5 flex items-center space-x-3">
+          <span class="text-lg">📊</span><span>Dashboard Overview</span>
+        </button>
+        <button onclick="switchAdminTab('products')" id="aside-btn-products" class="text-left w-full px-6 py-3.5 flex items-center space-x-3 hover:bg-gray-50">
+          <span class="text-lg">🍲</span><span>Product Catalog</span>
+        </button>
+        <button onclick="switchAdminTab('stock')" id="aside-btn-stock" class="text-left w-full px-6 py-3.5 flex items-center space-x-3 hover:bg-gray-50">
+          <span class="text-lg">⚖️</span><span>Stock & Inventory</span>
+        </button>
+        <button onclick="switchAdminTab('orders')" id="aside-btn-orders" class="text-left w-full px-6 py-3.5 flex items-center space-x-3 hover:bg-gray-50">
+          <span class="text-lg">📦</span><span>Order Management</span>
+        </button>
+        <button onclick="switchAdminTab('customers')" id="aside-btn-customers" class="text-left w-full px-6 py-3.5 flex items-center space-x-3 hover:bg-gray-50">
+          <span class="text-lg">👥</span><span>Customers CRM</span>
+        </button>
+        <button onclick="switchAdminTab('payments')" id="aside-btn-payments" class="text-left w-full px-6 py-3.5 flex items-center space-x-3 hover:bg-gray-50">
+          <span class="text-lg">💳</span><span>Payments & Refunds</span>
+        </button>
+        <button onclick="switchAdminTab('reports')" id="aside-btn-reports" class="text-left w-full px-6 py-3.5 flex items-center space-x-3 hover:bg-gray-50">
+          <span class="text-lg">📈</span><span>Reports & Exports</span>
+        </button>
+      </aside>
+
+      <!-- Right panel workspaces -->
+      <main class="flex-grow p-6 sm:p-8 overflow-x-hidden bg-gray-50/50">
+        
+        <!-- 1. DASHBOARD OVERVIEW PANEL -->
+        <section id="panel-overview" class="space-y-8">
+          <h2 class="text-xl font-bold font-tiro text-gray-800">Admin Overview Dashboard</h2>
+          <!-- Statistical Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs text-gray-500">
+            <div class="bg-white p-5 border rounded-2xl shadow-sm space-y-2">
+              <span class="font-bold text-gray-400 block uppercase">Today's Orders</span>
+              <span class="text-saffron-600 font-extrabold text-2xl" id="ov-today-orders">0</span>
+            </div>
+            <div class="bg-white p-5 border rounded-2xl shadow-sm space-y-2">
+              <span class="font-bold text-gray-400 block uppercase">Total Revenue</span>
+              <span class="text-brandred-600 font-extrabold text-2xl" id="ov-total-revenue">₹0</span>
+            </div>
+            <div class="bg-white p-5 border rounded-2xl shadow-sm space-y-2">
+              <span class="font-bold text-gray-400 block uppercase">Pending / Active</span>
+              <span class="text-gray-800 font-extrabold text-2xl" id="ov-pending-orders">0</span>
+            </div>
+            <div class="bg-white p-5 border rounded-2xl shadow-sm space-y-2">
+              <span class="font-bold text-gray-400 block uppercase">Delivered Orders</span>
+              <span class="text-green-600 font-extrabold text-2xl" id="ov-delivered-orders">0</span>
+            </div>
+            <div class="bg-white p-5 border rounded-2xl shadow-sm space-y-2">
+              <span class="font-bold text-gray-400 block uppercase">Total Customers</span>
+              <span class="text-gray-800 font-extrabold text-2xl" id="ov-total-customers">0</span>
+            </div>
+            <div class="bg-white p-5 border rounded-2xl shadow-sm space-y-2">
+              <span class="font-bold text-gray-400 block uppercase">Available Stock</span>
+              <span class="text-gray-800 font-extrabold text-2xl" id="ov-total-stock">0 KG</span>
+            </div>
+            <div class="bg-white p-5 border rounded-2xl shadow-sm space-y-2 col-span-2 border-red-100 bg-red-50/30">
+              <span class="font-bold text-red-500 block uppercase">⚠️ Low Stock Alerts</span>
+              <span class="text-red-700 font-extrabold text-lg" id="ov-low-stock-count">0 Products Below 10 KG</span>
+            </div>
+          </div>
+
+          <!-- Bottom: Low stock alert table -->
+          <div class="bg-white border p-6 rounded-2xl shadow-sm space-y-4">
+            <h3 class="font-bold text-sm text-brandred-600">Low Stock Warnings</h3>
+            <div class="overflow-x-auto text-xs">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b text-gray-400">
+                    <th class="pb-2">Product Name</th>
+                    <th class="pb-2">Remaining Stock</th>
+                    <th class="pb-2">Status</th>
+                    <th class="pb-2 text-right">Quick Restock</th>
+                  </tr>
+                </thead>
+                <tbody id="low-stock-table-body">
+                  <!-- JS populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. PRODUCT MANAGEMENT PANEL -->
+        <section id="panel-products" class="space-y-6 hidden">
+          <div class="flex justify-between items-center border-b pb-3">
+            <h2 class="text-xl font-bold font-tiro text-gray-800">Product Catalog Manager</h2>
+            <button onclick="openAddProductModal()" class="bg-saffron-500 hover:bg-saffron-600 text-white font-bold text-xs px-4 py-2 rounded-full shadow-sm">Add New Product</button>
+          </div>
+
+          <!-- Add Product Modal Form -->
+          <div id="product-form-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden">
+            <form id="prod-edit-form" class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full mx-4 shadow-2xl text-xs text-gray-700 space-y-4 max-h-[90vh] overflow-y-auto" onsubmit="saveProductItem(event)">
+              <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-sm text-brandred-600">Add / Edit Product Details</h3>
+                <button type="button" onclick="closeProductModal()" class="text-gray-400 font-bold text-sm">✕</button>
+              </div>
+              <input type="hidden" id="edit-prod-id">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                  <label class="font-bold">Product Name (EN)</label>
+                  <input type="text" id="edit-name-en" class="w-full border rounded-lg p-2 focus:ring-1 focus:ring-saffron-500 focus:outline-none" required>
+                </div>
+                <div class="space-y-1">
+                  <label class="font-bold">Product Name (HI)</label>
+                  <input type="text" id="edit-name-hi" class="w-full border rounded-lg p-2 focus:ring-1 focus:ring-saffron-500 focus:outline-none" required>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                  <label class="font-bold">Price per KG (₹)</label>
+                  <input type="number" id="edit-price" class="w-full border rounded-lg p-2 focus:ring-1 focus:ring-saffron-500 focus:outline-none" required>
+                </div>
+                <div class="space-y-1">
+                  <label class="font-bold">Category</label>
+                  <select id="edit-category" class="w-full border rounded-lg p-2 focus:outline-none">
+                    <option value="sev">Sev</option>
+                    <option value="mixture">Mixture</option>
+                    <option value="bhujia">Bhujia</option>
+                    <option value="nuts">Peanuts</option>
+                    <option value="peas">Peas</option>
+                    <option value="dal">Dal</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                  <label class="font-bold">Image URL Path</label>
+                  <input type="text" id="edit-image" class="w-full border rounded-lg p-2 focus:outline-none" required value="assets/images/mixture_namkeen.png">
+                </div>
+                <div class="space-y-1">
+                  <label class="font-bold">Initial Stock (KG)</label>
+                  <input type="number" id="edit-stock" class="w-full border rounded-lg p-2 focus:outline-none" required>
+                </div>
+              </div>
+              <div class="space-y-1">
+                <label class="font-bold">Product Description (EN)</label>
+                <textarea id="edit-desc-en" rows="2" class="w-full border rounded-lg p-2 focus:outline-none" required></textarea>
+              </div>
+              <div class="space-y-1">
+                <label class="font-bold">Product Description (HI)</label>
+                <textarea id="edit-desc-hi" rows="2" class="w-full border rounded-lg p-2 focus:outline-none" required></textarea>
+              </div>
+              <button type="submit" class="w-full bg-brandred-600 text-white font-bold py-3 rounded-full hover:bg-brandred-700 shadow transition-colors uppercase">Save changes</button>
+            </form>
+          </div>
+
+          <div class="bg-white border rounded-2xl p-6 shadow-sm overflow-x-auto text-xs">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b text-gray-400">
+                  <th class="pb-2">Image</th>
+                  <th class="pb-2">Name</th>
+                  <th class="pb-2">Category</th>
+                  <th class="pb-2">Price/KG</th>
+                  <th class="pb-2">Remaining Stock</th>
+                  <th class="pb-2 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="catalog-table-body">
+                <!-- JS populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 3. STOCK & INVENTORY CONTROL -->
+        <section id="panel-stock" class="space-y-6 hidden">
+          <h2 class="text-xl font-bold font-tiro text-gray-800">Inventory & Stock Manager</h2>
+          
+          <div class="bg-white border rounded-2xl p-6 shadow-sm overflow-x-auto text-xs space-y-4">
+            <div class="flex justify-between items-center pb-2 border-b">
+              <span class="font-bold text-brandred-600">Stock Levels Control</span>
+              <span class="text-[10px] text-gray-400 italic">Warnings occur when stock falls under 10 KG</span>
+            </div>
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b text-gray-400">
+                  <th class="pb-2">Product Name</th>
+                  <th class="pb-2">Current Stock (KG)</th>
+                  <th class="pb-2">Quick Adjustments</th>
+                  <th class="pb-2">Availability State</th>
+                  <th class="pb-2 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-table-body">
+                <!-- JS populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 4. ORDER MANAGEMENT Dispatch Panel -->
+        <section id="panel-orders" class="space-y-6 hidden">
+          <h2 class="text-xl font-bold font-tiro text-gray-800">Order Dispatch Dashboard</h2>
+          
+          <div class="bg-white border rounded-2xl p-6 shadow-sm overflow-x-auto text-xs space-y-4">
+            <div class="flex justify-between items-center border-b pb-2">
+              <span class="font-bold text-brandred-600">Orders List</span>
+              <select id="order-status-filter" onchange="filterOrdersTable(this.value)" class="border rounded-full px-3 py-1 bg-white focus:outline-none text-[10px]">
+                <option value="all">All Orders</option>
+                <option value="placed">Placed</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="preparing">Preparing</option>
+                <option value="packed">Packed</option>
+                <option value="out_for_delivery">Out for Delivery</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b text-gray-400">
+                  <th class="pb-2">Order ID</th>
+                  <th class="pb-2">Customer Details</th>
+                  <th class="pb-2">Address Info</th>
+                  <th class="pb-2">Status Timeline</th>
+                  <th class="pb-2">Payment Status</th>
+                  <th class="pb-2">Delivery Partner</th>
+                  <th class="pb-2 text-right">Update Action</th>
+                </tr>
+              </thead>
+              <tbody id="orders-control-table-body">
+                <!-- JS populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 5. CUSTOMERS CRM PANEL -->
+        <section id="panel-customers" class="space-y-6 hidden">
+          <div class="flex justify-between items-center border-b pb-3">
+            <h2 class="text-xl font-bold font-tiro text-gray-800">Customers CRM List</h2>
+            <button onclick="exportCustomerCSV()" class="bg-saffron-500 hover:bg-saffron-600 text-white font-bold text-xs px-4 py-2 rounded-full shadow-sm">Export Customers CSV</button>
+          </div>
+
+          <div class="bg-white border rounded-2xl p-6 shadow-sm overflow-x-auto text-xs">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b text-gray-400">
+                  <th class="pb-2">Name</th>
+                  <th class="pb-2">Email</th>
+                  <th class="pb-2">Mobile</th>
+                  <th class="pb-2">Total Orders</th>
+                  <th class="pb-2 text-right">Contact</th>
+                </tr>
+              </thead>
+              <tbody id="customers-crm-table-body">
+                <!-- JS populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 6. PAYMENTS & REFUNDS PANEL -->
+        <section id="panel-payments" class="space-y-6 hidden">
+          <h2 class="text-xl font-bold font-tiro text-gray-800">Payment Transcripts & Refunds</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Payments Table -->
+            <div class="bg-white border rounded-2xl p-6 shadow-sm overflow-x-auto text-xs space-y-3">
+              <h3 class="font-bold text-sm text-brandred-600 border-b pb-2">Recent Transactions</h3>
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b text-gray-400">
+                    <th class="pb-2">Order ID</th>
+                    <th class="pb-2">Amount</th>
+                    <th class="pb-2">Method</th>
+                    <th class="pb-2 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="payments-history-body">
+                  <!-- JS populated -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Refunds Table -->
+            <div class="bg-white border rounded-2xl p-6 shadow-sm overflow-x-auto text-xs space-y-3">
+              <h3 class="font-bold text-sm text-brandred-600 border-b pb-2">Process Refund / Cancellation Requests</h3>
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b text-gray-400">
+                    <th class="pb-2">Order ID</th>
+                    <th class="pb-2">Refund Value</th>
+                    <th class="pb-2">Reason</th>
+                    <th class="pb-2 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="refunds-requests-body">
+                  <!-- JS populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. REPORTS & EXPORTS PANEL -->
+        <section id="panel-reports" class="space-y-8 hidden">
+          <div class="flex justify-between items-center border-b pb-3">
+            <h2 class="text-xl font-bold font-tiro text-gray-800">Sales Reports & Exports Dashboard</h2>
+            <div class="flex space-x-2">
+              <button onclick="window.print()" class="bg-brandred-600 hover:bg-brandred-700 text-white font-bold text-xs px-4 py-2 rounded-full shadow-sm">Download Sales Reports PDF</button>
+              <button onclick="exportOrdersCSV()" class="bg-saffron-500 hover:bg-saffron-600 text-white font-bold text-xs px-4 py-2 rounded-full shadow-sm">Download Orders Excel (CSV)</button>
+            </div>
+          </div>
+
+          <!-- Sales Analytics reports timeline tabs -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-gray-600">
+            <!-- Daily sales report card -->
+            <div class="bg-white p-5 border rounded-2xl shadow-sm space-y-3">
+              <h3 class="font-bold text-brandred-600 border-b pb-2 uppercase">Daily Sales Report</h3>
+              <div class="flex justify-between font-tiro">
+                <span>Today's Total:</span>
+                <strong class="text-gray-800 text-sm" id="rep-daily-total">₹0</strong>
+              </div>
+              <div class="flex justify-between">
+                <span>Today's Count:</span>
+                <strong id="rep-daily-count">0 orders</strong>
+              </div>
+            </div>
+
+            <!-- Weekly sales report card -->
+            <div class="bg-white p-5 border rounded-2xl shadow-sm space-y-3">
+              <h3 class="font-bold text-brandred-600 border-b pb-2 uppercase">Weekly Sales Report</h3>
+              <div class="flex justify-between font-tiro">
+                <span>Weekly Total:</span>
+                <strong class="text-gray-800 text-sm" id="rep-weekly-total">₹0</strong>
+              </div>
+              <div class="flex justify-between">
+                <span>Weekly Count:</span>
+                <strong id="rep-weekly-count">0 orders</strong>
+              </div>
+            </div>
+
+            <!-- Monthly sales report card -->
+            <div class="bg-white p-5 border rounded-2xl shadow-sm space-y-3">
+              <h3 class="font-bold text-brandred-600 border-b pb-2 uppercase">Monthly Sales Report</h3>
+              <div class="flex justify-between font-tiro">
+                <span>Monthly Total:</span>
+                <strong class="text-gray-800 text-sm" id="rep-monthly-total">₹0</strong>
+              </div>
+              <div class="flex justify-between">
+                <span>Monthly Count:</span>
+                <strong id="rep-monthly-count">0 orders</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Best Selling Products Table -->
+          <div class="bg-white border p-6 rounded-2xl shadow-sm space-y-4">
+            <h3 class="font-bold text-sm text-brandred-600">Best Selling Products</h3>
+            <div class="overflow-x-auto text-xs">
+              <table class="w-full text-left font-tiro">
+                <thead>
+                  <tr class="border-b text-gray-400">
+                    <th class="pb-2">Product Name</th>
+                    <th class="pb-2">Units Sold (KG)</th>
+                    <th class="pb-2">Product Revenue</th>
+                  </tr>
+                </thead>
+                <tbody id="best-sellers-table-body">
+                  <!-- JS populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Core Scripts -->
+  <script src="assets/js/app.js"></script>
+  <!-- Custom toast alert initializer in case common.js doesn't run -->
+  <script>
+    // Alert Notification Storage
+    let adminAlerts = [
+      { id: 1, type: "system", msg: "Admin Dashboard initialized successfully.", time: "Just Now" }
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Direct session validation check
+      const user = AppState.getUser();
+      const loginBox = document.getElementById("admin-login-container");
+      const layoutBox = document.getElementById("admin-dashboard-layout");
+
+      if (user && user.role === "admin") {
+        loginBox.classList.add("hidden");
+        layoutBox.classList.remove("hidden");
+        initDashboardEngine();
+      } else {
+        loginBox.classList.remove("hidden");
+        layoutBox.classList.add("hidden");
+      }
+    });
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById("admin-email-input").value.trim();
+      const password = document.getElementById("admin-password-input").value.trim();
+
+      const users = LocalDb.getUsers();
+      const adminMatch = users.find(u => u.email === email && u.password === password && u.role === "admin");
+
+      if (adminMatch) {
+        AppState.setUser(adminMatch);
+        showToast("Welcome Back Admin Gautam! / लॉगिन सफल हुआ!", "success");
+        setTimeout(() => {
+          document.getElementById("admin-login-container").classList.add("hidden");
+          document.getElementById("admin-dashboard-layout").classList.remove("hidden");
+          initDashboardEngine();
+        }, 800);
+      } else {
+        showToast("Invalid admin email or password credentials.", "error");
+      }
+    }
+
+    function handleAdminPanelLogout() {
+      AppState.setUser(null);
+      showToast("Admin logged out successfully.", "success");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+
+    function showForgotModal() {
+      document.getElementById("forgot-password-modal").classList.remove("hidden");
+    }
+    function closeForgotModal() {
+      document.getElementById("forgot-password-modal").classList.add("hidden");
+    }
+
+    // Switch Tabs Navigation
+    function switchAdminTab(tabName) {
+      const tabs = ["overview", "products", "stock", "orders", "customers", "payments", "reports"];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`aside-btn-${t}`);
+        const panel = document.getElementById(`panel-${t}`);
+        if (btn && panel) {
+          if (t === tabName) {
+            btn.className = "admin-sidebar-btn-active text-left w-full px-6 py-3.5 flex items-center space-x-3";
+            panel.classList.remove("hidden");
+          } else {
+            btn.className = "text-left w-full px-6 py-3.5 flex items-center space-x-3 hover:bg-gray-50 text-gray-600";
+            panel.classList.add("hidden");
+          }
+        }
+      });
+
+      // Lazy refresh panel metrics
+      if (tabName === "overview") renderOverviewDashboard();
+      if (tabName === "products") renderProductCatalog();
+      if (tabName === "stock") renderStockControl();
+      if (tabName === "orders") renderOrdersDispatch();
+      if (tabName === "customers") renderCustomersCRM();
+      if (tabName === "payments") renderPaymentsAndRefunds();
+      if (tabName === "reports") renderSalesReportCharts();
+    }
+
+    // Main Engine Initiator
+    function initDashboardEngine() {
+      // Check low stock settings and add alerts automatically on boot
+      verifyStockAlerts();
+
+      renderOverviewDashboard();
+      switchAdminTab("overview");
+
+      // Auto update listener on orders
+      window.addEventListener("orderStatusUpdated", () => {
+        verifyStockAlerts();
+        renderOverviewDashboard();
+      });
+    }
+
+    function verifyStockAlerts() {
+      const products = LocalDb.getProducts();
+      products.forEach(p => {
+        if (p.stock < 10) {
+          const exists = adminAlerts.some(a => a.productId === p.id && a.type === "low_stock");
+          if (!exists) {
+            adminAlerts.unshift({
+              id: Date.now() + Math.random(),
+              type: "low_stock",
+              productId: p.id,
+              msg: `⚠️ Low Stock Warning: ${p.name.en} is currently at ${p.stock} KG. Restock soon.`,
+              time: "Alert triggered"
+            });
+            showToast(`Low Stock Alert: ${p.name.en} < 10 KG`, "error");
+          }
+        }
+      });
+      updateAlertsCounterBadge();
+    }
+
+    function updateAlertsCounterBadge() {
+      const badge = document.getElementById("alerts-count-badge");
+      if (badge) {
+        if (adminAlerts.length > 0) {
+          badge.textContent = adminAlerts.length;
+          badge.classList.remove("hidden");
+        } else {
+          badge.classList.add("hidden");
+        }
+      }
+    }
+
+    function toggleAlertsFeed() {
+      const dropdown = document.getElementById("alerts-feed-dropdown");
+      if (dropdown) {
+        dropdown.classList.toggle("hidden");
+        renderAlertsList();
+      }
+    }
+
+    function clearAlertsFeed() {
+      adminAlerts = [];
+      updateAlertsCounterBadge();
+      renderAlertsList();
+    }
+
+    function renderAlertsList() {
+      const list = document.getElementById("alerts-feed-list");
+      if (!list) return;
+
+      if (adminAlerts.length === 0) {
+        list.innerHTML = `<p class="p-4 text-center text-gray-400 text-[10px]">No new alerts.</p>`;
+        return;
+      }
+
+      list.innerHTML = adminAlerts.map(a => `
+        <div class="p-3 text-[10px] hover:bg-gray-50">
+          <div class="flex justify-between text-[8px] text-gray-400 font-bold uppercase mb-0.5">
+            <span>${a.type}</span>
+            <span>${a.time}</span>
+          </div>
+          <p class="font-semibold text-gray-700">${a.msg}</p>
+        </div>
+      `).join('');
+    }
+
+    // 1. OVERVIEW RENDERING
+    function renderOverviewDashboard() {
+      const orders = LocalDb.getOrders();
+      const products = LocalDb.getProducts();
+      const customers = LocalDb.getUsers().filter(u => u.role === "customer");
+
+      // Todays Orders
+      const todayDateStr = new Date().toDateString();
+      const todayOrders = orders.filter(o => new Date(o.date).toDateString() === todayDateStr);
+      document.getElementById("ov-today-orders").textContent = todayOrders.length;
+
+      // Revenue
+      const totalRevenue = orders.reduce((acc, o) => acc + o.total, 0);
+      document.getElementById("ov-total-revenue").textContent = `₹${totalRevenue}`;
+
+      // Pending (not delivered or cancelled)
+      const pendingOrders = orders.filter(o => o.status !== "delivered" && o.status !== "cancelled");
+      document.getElementById("ov-pending-orders").textContent = pendingOrders.length;
+
+      // Delivered
+      const deliveredOrders = orders.filter(o => o.status === "delivered");
+      document.getElementById("ov-delivered-orders").textContent = deliveredOrders.length;
+
+      // Customer count
+      document.getElementById("ov-total-customers").textContent = customers.length || orders.length;
+
+      // Available total stock
+      const totalStockSum = products.reduce((acc, p) => acc + p.stock, 0);
+      document.getElementById("ov-total-stock").textContent = `${totalStockSum} KG`;
+
+      // Low stock warning count
+      const lowStockProducts = products.filter(p => p.stock < 10);
+      document.getElementById("ov-low-stock-count").textContent = `${lowStockProducts.length} Products Below 10 KG`;
+
+      // Low Stock Table
+      const lowStockBody = document.getElementById("low-stock-table-body");
+      if (lowStockProducts.length === 0) {
+        lowStockBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-green-600 font-semibold">All products have sufficient stock levels (>10 KG)</td></tr>`;
+      } else {
+        lowStockBody.innerHTML = lowStockProducts.map(p => `
+          <tr class="border-b hover:bg-red-50/20 font-tiro">
+            <td class="py-2.5 font-semibold text-gray-800">${p.name.en} (${p.name.hi})</td>
+            <td class="py-2.5 font-bold text-red-600">${p.stock} KG</td>
+            <td class="py-2.5"><span class="px-2 py-0.5 rounded-full text-[9px] bg-red-100 text-red-700 font-bold font-sans">CRITICAL LOW</span></td>
+            <td class="py-2.5 text-right">
+              <button onclick="quickAddStock('${p.id}', 50)" class="bg-saffron-500 text-white px-3 py-1 rounded-full text-[10px] font-bold hover:bg-saffron-600 transition-colors">Add +50 KG</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function quickAddStock(productId, qty) {
+      let products = LocalDb.getProducts();
+      let idx = products.findIndex(p => p.id === productId);
+      if (idx !== -1) {
+        products[idx].stock += qty;
+        LocalDb.saveProducts(products);
+        
+        // Remove the warning alert associated
+        adminAlerts = adminAlerts.filter(a => !(a.productId === productId && a.type === "low_stock"));
+        updateAlertsCounterBadge();
+
+        showToast(`Added ${qty} KG to ${products[idx].name.en}.`, "success");
+        verifyStockAlerts();
+        renderOverviewDashboard();
+      }
+    }
+
+    // 2. PRODUCT CATALOG RENDERING
+    function renderProductCatalog() {
+      const products = LocalDb.getProducts();
+      const body = document.getElementById("catalog-table-body");
+      if (!body) return;
+
+      body.innerHTML = products.map(p => `
+        <tr class="border-b hover:bg-gray-50/50">
+          <td class="py-3"><img src="${p.image}" class="w-10 h-10 object-cover rounded-xl border"></td>
+          <td class="py-3 font-semibold text-gray-800 font-tiro">
+            <span>${p.name.en}</span><br>
+            <span class="text-[10px] text-gray-400 font-normal">${p.name.hi}</span>
+          </td>
+          <td class="py-3 uppercase text-[10px] text-gray-400 font-bold">${p.category}</td>
+          <td class="py-3 font-bold text-brandred-600">₹${p.pricePerKg}</td>
+          <td class="py-3 font-semibold text-gray-600">${p.stock} KG</td>
+          <td class="py-3 text-right space-x-2">
+            <button onclick="editProductModal('${p.id}')" class="text-saffron-600 hover:underline font-bold">Edit</button>
+            <button onclick="deleteCatalogProduct('${p.id}')" class="text-red-500 hover:underline font-bold">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openAddProductModal() {
+      document.getElementById("prod-edit-form").reset();
+      document.getElementById("edit-prod-id").value = "";
+      document.getElementById("product-form-modal").classList.remove("hidden");
+    }
+
+    function closeProductModal() {
+      document.getElementById("product-form-modal").classList.add("hidden");
+    }
+
+    function editProductModal(id) {
+      const products = LocalDb.getProducts();
+      const p = products.find(prod => prod.id === id);
+      if (p) {
+        document.getElementById("edit-prod-id").value = p.id;
+        document.getElementById("edit-name-en").value = p.name.en;
+        document.getElementById("edit-name-hi").value = p.name.hi;
+        document.getElementById("edit-price").value = p.pricePerKg;
+        document.getElementById("edit-category").value = p.category;
+        document.getElementById("edit-image").value = p.image;
+        document.getElementById("edit-stock").value = p.stock;
+        document.getElementById("edit-desc-en").value = p.description.en;
+        document.getElementById("edit-desc-hi").value = p.description.hi;
+
+        document.getElementById("product-form-modal").classList.remove("hidden");
+      }
+    }
+
+    function deleteCatalogProduct(id) {
+      if (confirm("Are you sure you want to delete this product from store?")) {
+        let products = LocalDb.getProducts();
+        products = products.filter(p => p.id !== id);
+        LocalDb.saveProducts(products);
+        showToast("Product deleted successfully.", "success");
+        renderProductCatalog();
+      }
+    }
+
+    function saveProductItem(e) {
+      e.preventDefault();
+      const id = document.getElementById("edit-prod-id").value;
+      const nameEn = document.getElementById("edit-name-en").value.trim();
+      const nameHi = document.getElementById("edit-name-hi").value.trim();
+      const price = parseInt(document.getElementById("edit-price").value);
+      const category = document.getElementById("edit-category").value;
+      const image = document.getElementById("edit-image").value.trim();
+      const stock = parseInt(document.getElementById("edit-stock").value);
+      const descEn = document.getElementById("edit-desc-en").value.trim();
+      const descHi = document.getElementById("edit-desc-hi").value.trim();
+
+      let products = LocalDb.getProducts();
+
+      if (id) {
+        // Edit mode
+        let idx = products.findIndex(p => p.id === id);
+        if (idx !== -1) {
+          products[idx].name = { en: nameEn, hi: nameHi };
+          products[idx].pricePerKg = price;
+          products[idx].category = category;
+          products[idx].image = image;
+          products[idx].stock = stock;
+          products[idx].description = { en: descEn, hi: descHi };
+        }
+      } else {
+        // Create mode
+        const newId = nameEn.toLowerCase().replace(/\s+/g, "-");
+        products.push({
+          id: newId,
+          name: { en: nameEn, hi: nameHi },
+          pricePerKg: price,
+          category,
+          image,
+          stock,
+          description: { en: descEn, hi: descHi },
+          benefits: { en: ["Authentic spices", "Daily production"], hi: ["प्राकृतिक मसाले", "रोजाना उत्पादन"] },
+          reviews: []
+        });
+      }
+
+      LocalDb.saveProducts(products);
+      showToast("Product saved successfully!", "success");
+      closeProductModal();
+      renderProductCatalog();
+      verifyStockAlerts();
+    }
+
+    // 3. STOCK CONTROL RENDERING
+    function renderStockControl() {
+      const products = LocalDb.getProducts();
+      const body = document.getElementById("inventory-table-body");
+      if (!body) return;
+
+      body.innerHTML = products.map(p => {
+        const isOutOfStock = p.stock <= 0;
+        const lowStock = p.stock < 10 && p.stock > 0;
+        const statusBadge = isOutOfStock 
+          ? `<span class="px-2 py-0.5 rounded-full text-[9px] bg-red-100 text-red-700 font-bold uppercase">OUT OF STOCK</span>`
+          : (lowStock 
+              ? `<span class="px-2 py-0.5 rounded-full text-[9px] bg-yellow-100 text-yellow-700 font-bold uppercase">LOW STOCK</span>`
+              : `<span class="px-2 py-0.5 rounded-full text-[9px] bg-green-100 text-green-700 font-bold uppercase">IN STOCK</span>`
+            );
+
+        return `
+          <tr class="border-b hover:bg-gray-50/50 font-tiro">
+            <td class="py-3 font-semibold text-gray-800">${p.name.en}</td>
+            <td class="py-3 font-bold text-gray-700">${p.stock} KG</td>
+            <td class="py-3 space-x-1 font-sans">
+              <button onclick="adjustProductStock('${p.id}', 10)" class="border px-2 py-1 rounded-lg hover:bg-gray-50 font-bold">+10 KG</button>
+              <button onclick="adjustProductStock('${p.id}', -10)" class="border px-2 py-1 rounded-lg hover:bg-gray-50 font-bold">-10 KG</button>
+            </td>
+            <td class="py-3 font-sans">${statusBadge}</td>
+            <td class="py-3 text-right">
+              <button onclick="toggleProductAvailability('${p.id}')" class="border px-3 py-1 rounded-full text-[10px] font-bold ${isOutOfStock ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-red-50 text-red-600 hover:bg-red-100'}">
+                ${isOutOfStock ? 'Mark In Stock' : 'Mark Out of Stock'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function adjustProductStock(id, amount) {
+      let products = LocalDb.getProducts();
+      let idx = products.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        products[idx].stock = Math.max(0, products[idx].stock + amount);
+        LocalDb.saveProducts(products);
+        showToast("Stock level updated.", "success");
+        renderStockControl();
+        verifyStockAlerts();
+      }
+    }
+
+    function toggleProductAvailability(id) {
+      let products = LocalDb.getProducts();
+      let idx = products.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        const currentlyOOS = products[idx].stock <= 0;
+        products[idx].stock = currentlyOOS ? 100 : 0;
+        LocalDb.saveProducts(products);
+        showToast("Availability status updated.", "success");
+        renderStockControl();
+        verifyStockAlerts();
+      }
+    }
+
+    // 4. ORDER CONTROL DISPATCH RENDERING
+    let currentFilter = "all";
+
+    function filterOrdersTable(val) {
+      currentFilter = val;
+      renderOrdersDispatch();
+    }
+
+    function renderOrdersDispatch() {
+      const orders = LocalDb.getOrders();
+      const body = document.getElementById("orders-control-table-body");
+      if (!body) return;
+
+      let filtered = orders.slice().reverse();
+      if (currentFilter !== "all") {
+        filtered = filtered.filter(o => o.status === currentFilter);
+      }
+
+      if (filtered.length === 0) {
+        body.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-gray-400 italic">No orders match this status filter.</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = filtered.map(order => {
+        const isPaid = order.paymentStatus === "paid";
+        
+        // 5KM Area check helper: simple toggle check
+        const isNearJaipur = order.address.city.toLowerCase().includes("jaipur");
+        const areaBadge = isNearJaipur 
+          ? `<span class="px-2 py-0.5 rounded-full text-[8px] bg-green-50 text-green-600 border border-green-200">Inside 5KM Area</span>`
+          : `<span class="px-2 py-0.5 rounded-full text-[8px] bg-gray-50 text-gray-400 border">All India Post</span>`;
+
+        return `
+          <tr class="border-b hover:bg-gray-50/50">
+            <td class="py-3 font-mono font-bold text-brandred-600">${order.id}</td>
+            <td class="py-3">
+              <span class="font-bold text-gray-800">${order.address.name}</span><br>
+              <span class="text-[10px] text-gray-400 font-bold">${order.address.phone}</span>
+            </td>
+            <td class="py-3 font-tiro text-gray-600">
+              <span>${order.address.addressLine}, ${order.address.city}</span><br>
+              ${areaBadge}
+            </td>
+            <td class="py-3">
+              <select onchange="updateOrderStatusAdmin('${order.id}', this.value)" class="border rounded-full px-2 py-1 bg-white font-bold text-[9px] text-saffron-600 focus:outline-none">
+                <option value="placed" ${order.status === 'placed' ? 'selected' : ''}>Placed</option>
+                <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+                <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>Preparing</option>
+                <option value="packed" ${order.status === 'packed' ? 'selected' : ''}>Packed</option>
+                <option value="out_for_delivery" ${order.status === 'out_for_delivery' ? 'selected' : ''}>Out For Delivery</option>
+                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+              </select>
+            </td>
+            <td class="py-3">
+              <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold ${isPaid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${order.paymentStatus}</span>
+            </td>
+            <td class="py-3">
+              <select onchange="assignDeliveryPartner('${order.id}', this.value)" class="border rounded-full px-2 py-1 bg-white font-bold text-[9px] text-gray-600 focus:outline-none">
+                <option value="">Assign Partner</option>
+                <option value="Ramesh Kumar" ${order.deliveryPartner === 'Ramesh Kumar' ? 'selected' : ''}>Ramesh Kumar</option>
+                <option value="Vikram Singh" ${order.deliveryPartner === 'Vikram Singh' ? 'selected' : ''}>Vikram Singh</option>
+                <option value="Surendra Saini" ${order.deliveryPartner === 'Surendra Saini' ? 'selected' : ''}>Surendra Saini</option>
+              </select>
+            </td>
+            <td class="py-3 text-right">
+              <a href="track.html?id=${order.id}" class="border text-gray-600 px-3 py-1 rounded-full hover:bg-gray-50 font-bold">Details</a>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function updateOrderStatusAdmin(orderId, newStatus) {
+      let orders = LocalDb.getOrders();
+      let idx = orders.findIndex(o => o.id === orderId);
+      if (idx !== -1) {
+        orders[idx].status = newStatus;
+        orders[idx].trackingTimeline.push({
+          status: newStatus,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          desc: {
+            hi: getStatusDetail(newStatus, true),
+            en: getStatusDetail(newStatus, false)
+          }
+        });
+
+        // Trigger Alerts if Order is Cancelled
+        if (newStatus === "cancelled") {
+          adminAlerts.unshift({
+            id: Date.now() + Math.random(),
+            type: "order_cancelled",
+            msg: `Order ${orderId} was cancelled by Administrator.`,
+            time: "Just Now"
+          });
+          updateAlertsCounterBadge();
+        }
+
+        LocalDb.saveOrders(orders);
+        showToast("Order status updated successfully.", "success");
+        renderOrdersDispatch();
+        window.dispatchEvent(new Event("orderStatusUpdated"));
+      }
+    }
+
+    function assignDeliveryPartner(orderId, partner) {
+      let orders = LocalDb.getOrders();
+      let idx = orders.findIndex(o => o.id === orderId);
+      if (idx !== -1) {
+        orders[idx].deliveryPartner = partner;
+        LocalDb.saveOrders(orders);
+        showToast(`Delivery partner ${partner} assigned successfully.`, "success");
+        renderOrdersDispatch();
+      }
+    }
+
+    // 5. CUSTOMERS CRM RENDERING
+    function renderCustomersCRM() {
+      const orders = LocalDb.getOrders();
+      const users = LocalDb.getUsers().filter(u => u.role === "customer");
+      const body = document.getElementById("customers-crm-table-body");
+      if (!body) return;
+
+      // Consolidate customers from user records + guest buyers
+      let customerMap = new Map();
+      users.forEach(u => {
+        customerMap.set(u.email, { name: u.name, email: u.email, phone: "--", orderCount: 0 });
+      });
+
+      orders.forEach(o => {
+        if (o.address && o.address.email) {
+          const email = o.address.email;
+          if (customerMap.has(email)) {
+            let existing = customerMap.get(email);
+            existing.orderCount += 1;
+            existing.phone = o.address.phone;
+          } else {
+            customerMap.set(email, {
+              name: o.address.name,
+              email: email,
+              phone: o.address.phone,
+              orderCount: 1
+            });
+          }
+        }
+      });
+
+      const customerList = Array.from(customerMap.values());
+
+      if (customerList.length === 0) {
+        body.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-gray-400 italic">No customers profiles found.</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = customerList.map(c => `
+        <tr class="border-b hover:bg-gray-50/50">
+          <td class="py-3 font-bold text-gray-800">${c.name}</td>
+          <td class="py-3 text-gray-600 font-semibold">${c.email}</td>
+          <td class="py-3 font-semibold text-gray-500">${c.phone}</td>
+          <td class="py-3 text-brandred-600 font-bold">${c.orderCount} Orders</td>
+          <td class="py-3 text-right">
+            <a href="https://wa.me/91${c.phone.replace(/[^0-9]/g, '')}" target="_blank" class="text-green-500 font-bold hover:underline">WhatsApp</a>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // 6. PAYMENTS & REFUNDS RENDERING
+    function renderPaymentsAndRefunds() {
+      const orders = LocalDb.getOrders();
+      const pHistory = document.getElementById("payments-history-body");
+      const rRequests = document.getElementById("refunds-requests-body");
+      
+      if (!pHistory || !rRequests) return;
+
+      // Transaction log payments
+      pHistory.innerHTML = orders.map(o => `
+        <tr class="border-b text-xs hover:bg-gray-50/50">
+          <td class="py-2.5 font-bold font-mono text-brandred-600">${o.id}</td>
+          <td class="py-2.5 font-extrabold text-gray-800">₹${o.total}</td>
+          <td class="py-2.5 text-gray-400">${o.paymentMethod || 'Online'}</td>
+          <td class="py-2.5 text-right"><span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${o.paymentStatus === 'paid' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${o.paymentStatus}</span></td>
+        </tr>
+      `).join('');
+
+      // Filter orders where customer canceled / administrator requests refund
+      const refundsRequested = orders.filter(o => o.status === "cancelled" && o.paymentStatus === "paid");
+
+      if (refundsRequested.length === 0) {
+        rRequests.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-400 italic">No pending refund requests.</td></tr>`;
+      } else {
+        rRequests.innerHTML = refundsRequested.map(o => `
+          <tr class="border-b hover:bg-gray-50/50 text-xs">
+            <td class="py-2.5 font-bold font-mono text-brandred-600">${o.id}</td>
+            <td class="py-2.5 font-bold text-gray-800">₹${o.total}</td>
+            <td class="py-2.5 text-gray-400 leading-tight">Order Cancelled Refund</td>
+            <td class="py-2.5 text-right">
+              <button onclick="approveRefund('${o.id}')" class="bg-red-600 text-white font-bold px-3 py-1 rounded-full text-[10px] hover:bg-red-700 transition-colors">Approve</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function approveRefund(orderId) {
+      let orders = LocalDb.getOrders();
+      let idx = orders.findIndex(o => o.id === orderId);
+      if (idx !== -1) {
+        orders[idx].paymentStatus = "refunded";
+        LocalDb.saveOrders(orders);
+        showToast(`Refund of ₹${orders[idx].total} approved for Order ${orderId}!`, "success");
+        renderPaymentsAndRefunds();
+      }
+    }
+
+    // 7. REPORTS & EXPORTS RENDERING
+    function renderSalesReportCharts() {
+      const orders = LocalDb.getOrders();
+      const productsList = LocalDb.getProducts();
+      
+      const todayStr = new Date().toDateString();
+      const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      const oneMonthAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+
+      let dailyTotal = 0, dailyCount = 0;
+      let weeklyTotal = 0, weeklyCount = 0;
+      let monthlyTotal = 0, monthlyCount = 0;
+
+      let bestSellersMap = new Map();
+      productsList.forEach(p => {
+        bestSellersMap.set(p.id, { name: p.name.en, unitsSold: 0, revenue: 0 });
+      });
+
+      orders.forEach(o => {
+        const oDate = new Date(o.date);
+        const oTime = oDate.getTime();
+        
+        // Daily
+        if (oDate.toDateString() === todayStr) {
+          dailyTotal += o.total;
+          dailyCount += 1;
+        }
+
+        // Weekly
+        if (oTime >= oneWeekAgo) {
+          weeklyTotal += o.total;
+          weeklyCount += 1;
+        }
+
+        // Monthly
+        if (oTime >= oneMonthAgo) {
+          monthlyTotal += o.total;
+          monthlyCount += 1;
+        }
+
+        // Aggregate best sellers
+        o.items.forEach(item => {
+          if (bestSellersMap.has(item.id)) {
+            let data = bestSellersMap.get(item.id);
+            const weightVal = item.weight * item.qty;
+            data.unitsSold += weightVal;
+            const pObj = productsList.find(pr => pr.id === item.id);
+            data.revenue += weightVal * (pObj ? pObj.pricePerKg : 0);
+          }
+        });
+      });
+
+      document.getElementById("rep-daily-total").textContent = `₹${dailyTotal}`;
+      document.getElementById("rep-daily-count").textContent = `${dailyCount} orders`;
+      document.getElementById("rep-weekly-total").textContent = `₹${weeklyTotal}`;
+      document.getElementById("rep-weekly-count").textContent = `${weeklyCount} orders`;
+      document.getElementById("rep-monthly-total").textContent = `₹${monthlyTotal}`;
+      document.getElementById("rep-monthly-count").textContent = `${monthlyCount} orders`;
+
+      // Render Best Sellers Table
+      const sortedBestSellers = Array.from(bestSellersMap.values()).sort((a, b) => b.unitsSold - a.unitsSold);
+      const bsBody = document.getElementById("best-sellers-table-body");
+      if (bsBody) {
+        bsBody.innerHTML = sortedBestSellers.map(b => `
+          <tr class="border-b hover:bg-gray-50/50">
+            <td class="py-2.5 font-bold text-gray-800">${b.name}</td>
+            <td class="py-2.5 text-gray-600 font-semibold">${b.unitsSold} KG</td>
+            <td class="py-2.5 text-brandred-600 font-extrabold">₹${b.revenue}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    // EXPORT HANDLERS
+    function exportOrdersCSV() {
+      const orders = LocalDb.getOrders();
+      if (orders.length === 0) {
+        showToast("No orders available to export.", "error");
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,Order ID,Date,Customer,Total Amount,Status,Payment Status\n";
+      orders.forEach(o => {
+        csvContent += `${o.id},${o.date.split('T')[0]},${o.address.name},₹${o.total},${o.status},${o.paymentStatus}\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Marwadi_Namkeen_Orders.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("Orders downloaded successfully.", "success");
+    }
+
+    function exportCustomerCSV() {
+      const orders = LocalDb.getOrders();
+      if (orders.length === 0) {
+        showToast("No customer data available to export.", "error");
+        return;
+      }
+
+      let customerMap = new Map();
+      orders.forEach(o => {
+        customerMap.set(o.address.email, { name: o.address.name, email: o.address.email, phone: o.address.phone });
+      });
+
+      let csvContent = "data:text/csv;charset=utf-8,Name,Email,Phone\n";
+      customerMap.forEach(c => {
+        csvContent += `${c.name},${c.email},${c.phone}\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Marwadi_Namkeen_Customers.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("Customers report downloaded successfully.", "success");
+    }
+  </script>
+</body>
+</html>

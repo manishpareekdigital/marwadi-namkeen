@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>संपर्क करें | Marwadi Namkeen Jaipur Contact</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            saffron: {
+              50: '#fffbf0',
+              100: '#fffae0',
+              500: '#F28500',
+              600: '#E07B00',
+              700: '#C76D00',
+            },
+            brandred: {
+              50: '#fff5f5',
+              100: '#ffe3e3',
+              500: '#8B0000',
+              600: '#730000',
+              700: '#5C0000',
+            },
+            gold: {
+              500: '#D4AF37',
+              600: '#C59B27',
+              700: '#A37F1F',
+            },
+            dark: '#1A0D00'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="page-fade-in antialiased bg-gray-50/50">
+
+  <!-- Header Placeholder -->
+  <div id="header-placeholder"></div>
+
+  <!-- Hero Banner -->
+  <div class="bg-red-gradient text-white py-16 text-center border-b border-gold-500">
+    <h2 class="text-3xl font-extrabold font-tiro text-white tracking-wide" data-t="contact">संपर्क करें</h2>
+    <p class="text-xs text-gold-500 mt-2">Get in touch with Jaipur's favorite Namkeen makers</p>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 lg:grid-cols-2 gap-12">
+    <!-- Left: Contact Form -->
+    <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-6">
+      <h3 class="font-bold text-lg text-brandred-600 font-tiro">Send Us A Message</h3>
+      <form id="contact-form" class="space-y-4 text-xs text-gray-700" onsubmit="handleContactSubmit(event)">
+        <div class="space-y-1.5">
+          <label class="font-bold uppercase">Your Name</label>
+          <input type="text" id="contact-name" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required>
+        </div>
+        <div class="space-y-1.5">
+          <label class="font-bold uppercase">Email Address</label>
+          <input type="email" id="contact-email" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required>
+        </div>
+        <div class="space-y-1.5">
+          <label class="font-bold uppercase">Subject</label>
+          <input type="text" id="contact-subject" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required>
+        </div>
+        <div class="space-y-1.5">
+          <label class="font-bold uppercase">Message Details</label>
+          <textarea id="contact-msg" rows="4" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required></textarea>
+        </div>
+        <button type="submit" class="bg-saffron-500 hover:bg-saffron-600 text-white font-bold py-3 px-8 rounded-full text-xs uppercase tracking-wider transition-colors shadow">Send Message</button>
+      </form>
+    </div>
+
+    <!-- Right: Map & Direct Info -->
+    <div class="space-y-8">
+      <!-- Direct Contact Card -->
+      <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs text-gray-700">
+        <div>
+          <h4 class="font-bold text-gray-400 block uppercase mb-1">Office Address:</h4>
+          <p class="font-tiro text-gray-800" data-t="address">राजावास मार्केट, सीकर रोड, जयपुर, राजस्थान, भारत</p>
+        </div>
+        <div>
+          <h4 class="font-bold text-gray-400 block uppercase mb-1">Email Details:</h4>
+          <a href="mailto:pareekgautam152@gmail.com" class="text-brandred-600 hover:underline">pareekgautam152@gmail.com</a>
+        </div>
+        <div class="border-t pt-4">
+          <h4 class="font-bold text-gray-400 block uppercase mb-1">Call Directly:</h4>
+          <a href="tel:+918107116916" class="bg-brandred-50 text-brandred-600 font-bold border rounded-full px-4 py-2 flex items-center justify-center space-x-1.5 hover:bg-brandred-100 transition-colors">
+            <span>📞 Call +91 8107116916</span>
+          </a>
+        </div>
+        <div class="border-t pt-4">
+          <h4 class="font-bold text-gray-400 block uppercase mb-1">WhatsApp Chat:</h4>
+          <a href="https://wa.me/918107116916?text=Namaste!%20I%20have%20an%20inquiry" target="_blank" class="bg-green-50 text-green-600 font-bold border rounded-full px-4 py-2 flex items-center justify-center space-x-1.5 hover:bg-green-100 transition-colors">
+            <span>💬 Chat on WhatsApp</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Google Maps Embed -->
+      <div class="border border-gray-100 rounded-3xl overflow-hidden shadow-sm h-64 bg-gray-100">
+        <!-- Jaipur Sikar road map coordinates placeholder embed -->
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14197.643336471926!2d75.76211831828352!3d27.017105740445582!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db3cc68270503%3A0x6b4de3e78f993d0c!2sRajawas%2C%20Rajasthan%20302013!5e0!3m2!1sen!2sin!4v1718567540291!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Placeholder -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script>
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      showToast(AppState.getLang() === 'hi' ? "संदेश सफलतापूर्वक भेजा गया! धन्यवाद।" : "Your message has been sent successfully!", "success");
+      document.getElementById("contact-form").reset();
+    }
+  </script>
+</body>
+</html>

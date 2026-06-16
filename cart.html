@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>शॉपिंग कार्ट | Marwadi Namkeen Cart</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            saffron: {
+              50: '#fffbf0',
+              100: '#fffae0',
+              500: '#F28500',
+              600: '#E07B00',
+              700: '#C76D00',
+            },
+            brandred: {
+              50: '#fff5f5',
+              100: '#ffe3e3',
+              500: '#8B0000',
+              600: '#730000',
+              700: '#5C0000',
+            },
+            gold: {
+              500: '#D4AF37',
+              600: '#C59B27',
+              700: '#A37F1F',
+            },
+            dark: '#1A0D00'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="page-fade-in antialiased bg-gray-50/50">
+
+  <!-- Header Placeholder -->
+  <div id="header-placeholder"></div>
+
+  <div class="bg-red-gradient text-white py-12 text-center border-b border-gold-500">
+    <h2 class="text-3xl font-extrabold font-tiro text-white tracking-wide" data-t="cart">कार्ट</h2>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Main Cart Area -->
+    <div id="cart-content-container" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Left: Cart Items Table -->
+      <div class="lg:col-span-8 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-6">
+        <h3 class="font-bold text-lg text-brandred-600 font-tiro pb-3 border-b">Selected Products</h3>
+        
+        <div class="space-y-4" id="cart-items-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Right: Summary & Coupon -->
+      <div class="lg:col-span-4 space-y-6">
+        <!-- Coupon Card -->
+        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+          <h4 class="font-bold text-xs text-gray-700 uppercase tracking-widest">Apply Coupon Code</h4>
+          <div class="flex space-x-2">
+            <input type="text" id="coupon-code-input" class="w-full border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-saffron-500 uppercase bg-gray-50/50 font-bold" placeholder="E.g. MARWADI10">
+            <button onclick="applyCoupon()" class="bg-brandred-600 hover:bg-brandred-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition-colors">Apply</button>
+          </div>
+          <!-- Coupon Active State Badge -->
+          <div id="coupon-feedback" class="text-[10px] font-bold hidden"></div>
+          <!-- Coupon Suggestions Helper -->
+          <div class="border-t pt-2 space-y-1">
+            <p class="text-[9px] text-gray-400 font-bold">AVAILABLE OFFERS:</p>
+            <div class="text-[10px] text-gray-500 space-y-1">
+              <p><strong class="text-saffron-600">MARWADI10</strong> (10% Off, Min ₹500)</p>
+              <p><strong class="text-saffron-600">JAIPUR15</strong> (15% Off, Min ₹1000)</p>
+              <p><strong class="text-saffron-600">FREESHIP</strong> (Free Delivery, Min ₹800)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Summary Card -->
+        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4 text-xs">
+          <h4 class="font-bold text-sm text-brandred-600 font-tiro pb-3 border-b">Order Summary</h4>
+          
+          <div class="space-y-2.5">
+            <div class="flex justify-between text-gray-500">
+              <span data-t="subtotal">उप-योग</span>
+              <span id="summary-subtotal">₹0</span>
+            </div>
+            <div class="flex justify-between text-red-600 hidden" id="discount-summary-row">
+              <span data-t="discount">छूट</span>
+              <span id="summary-discount">-₹0</span>
+            </div>
+            <div class="flex justify-between text-gray-500">
+              <span data-t="shipping_charges">शिपिंग शुल्क</span>
+              <span id="summary-shipping">₹0</span>
+            </div>
+            <div class="flex justify-between text-gray-400 text-[10px] italic border-b pb-2">
+              <span>Delivery across India (Free above ₹800)</span>
+            </div>
+            <div class="flex justify-between font-bold text-base text-brandred-700 pt-2">
+              <span data-t="total">कुल</span>
+              <span id="summary-total">₹0</span>
+            </div>
+          </div>
+
+          <a href="checkout.html" class="block w-full text-center bg-saffron-500 hover:bg-saffron-600 text-white font-bold py-3.5 rounded-full shadow-lg text-xs uppercase tracking-wider transition-colors pt-4" data-t="checkout">
+            चेकआउट करें
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Empty Cart Fallback -->
+    <div id="empty-cart-fallback" class="hidden text-center py-20 space-y-6 bg-white border border-gray-100 rounded-3xl p-8 shadow-sm max-w-md mx-auto">
+      <span class="text-6xl animate-float block">🛒</span>
+      <h3 class="font-bold text-xl text-gray-800" data-t="empty_cart">आपका कार्ट खाली है!</h3>
+      <p class="text-xs text-gray-400">Fill your cart with delicious Jaipur Marwadi Namkeen now!</p>
+      <a href="shop.html" class="inline-block bg-brandred-600 hover:bg-brandred-700 text-white font-bold px-8 py-3 rounded-full text-xs shadow-md transition-transform hover:scale-105" data-t="cta_shop">
+        अभी खरीदें
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer Placeholder -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script>
+    let activeCoupon = null;
+
+    // Load Coupon code from session if exists
+    if (sessionStorage.getItem("mn_applied_coupon")) {
+      activeCoupon = JSON.parse(sessionStorage.getItem("mn_applied_coupon"));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCart();
+      if (activeCoupon) {
+        document.getElementById("coupon-code-input").value = activeCoupon.code;
+        showCouponFeedback(`Active: ${activeCoupon.code} applied!`, "success");
+      }
+    });
+
+    window.addEventListener("pageLanguageUpdated", () => {
+      renderCart();
+    });
+
+    window.addEventListener("cartUpdated", () => {
+      renderCart();
+    });
+
+    function renderCart() {
+      const container = document.getElementById("cart-content-container");
+      const fallback = document.getElementById("empty-cart-fallback");
+      const itemsList = document.getElementById("cart-items-list");
+      
+      const cart = AppState.getCart();
+      const products = LocalDb.getProducts();
+      const lang = AppState.getLang();
+
+      if (cart.length === 0) {
+        container.classList.add("hidden");
+        fallback.classList.remove("hidden");
+        return;
+      }
+
+      container.classList.remove("hidden");
+      fallback.classList.add("hidden");
+
+      let subtotal = 0;
+
+      itemsList.innerHTML = cart.map(item => {
+        const p = products.find(prod => prod.id === item.id);
+        if (!p) return "";
+
+        const name = p.name[lang] || p.name["en"];
+        const itemTotal = p.pricePerKg * item.weight * item.qty;
+        subtotal += itemTotal;
+
+        return `
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b pb-4 space-y-3 sm:space-y-0 text-xs">
+            <div class="flex items-center space-x-3">
+              <img src="${p.image}" alt="${name}" class="w-16 h-16 object-cover rounded-xl border">
+              <div>
+                <a href="product.html?id=${p.id}" class="font-bold text-gray-800 hover:underline font-tiro text-sm block">${name}</a>
+                <span class="text-gray-400 block font-bold text-[10px]">Variant: ${item.weight} KG</span>
+                <span class="text-brandred-600 font-extrabold mt-0.5 block">₹${p.pricePerKg}/KG</span>
+              </div>
+            </div>
+            
+            <div class="flex items-center space-x-6 w-full sm:w-auto justify-between sm:justify-end">
+              <!-- Qty counters -->
+              <div class="flex items-center border border-gray-200 rounded-lg bg-white overflow-hidden">
+                <button onclick="updateCartQty('${p.id}', ${item.weight}, -1)" class="px-2 py-1 text-gray-500 font-bold">-</button>
+                <span class="px-3 font-bold text-[10px]">${item.qty}</span>
+                <button onclick="updateCartQty('${p.id}', ${item.weight}, 1)" class="px-2 py-1 text-gray-500 font-bold">+</button>
+              </div>
+
+              <!-- Price calc -->
+              <div class="text-right">
+                <span class="text-brandred-700 font-extrabold text-sm block">₹${itemTotal}</span>
+                <button onclick="removeFromCart('${p.id}', ${item.weight})" class="text-[10px] text-gray-400 hover:text-red-600 transition-colors font-semibold">Remove</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Recalc Order Summary
+      recalcSummary(subtotal);
+    }
+
+    function updateCartQty(id, weight, change) {
+      const cart = AppState.getCart();
+      const existing = cart.find(i => i.id === id && i.weight === weight);
+      if (existing) {
+        AppState.updateQty(id, weight, existing.qty + change);
+      }
+    }
+
+    function removeFromCart(id, weight) {
+      AppState.removeFromCart(id, weight);
+      showToast(AppState.getLang() === 'hi' ? "उत्पाद हटाया गया!" : "Product removed from cart!", "success");
+    }
+
+    function recalcSummary(subtotal) {
+      let discount = 0;
+      let shipping = subtotal >= 800 ? 0 : 60;
+
+      // Validate active coupon requirements
+      if (activeCoupon) {
+        if (subtotal < activeCoupon.minCart) {
+          activeCoupon = null;
+          sessionStorage.removeItem("mn_applied_coupon");
+          showCouponFeedback("Coupon removed: Minimum cart value not met.", "error");
+        } else {
+          if (activeCoupon.freeShipping) {
+            shipping = 0;
+          }
+          if (activeCoupon.discountPercent > 0) {
+            discount = Math.round(subtotal * (activeCoupon.discountPercent / 100));
+          }
+        }
+      }
+
+      const total = subtotal - discount + shipping;
+
+      // Update Summary UI
+      document.getElementById("summary-subtotal").textContent = `₹${subtotal}`;
+      document.getElementById("summary-shipping").textContent = shipping === 0 ? "FREE" : `₹${shipping}`;
+      
+      const discRow = document.getElementById("discount-summary-row");
+      const discText = document.getElementById("summary-discount");
+      if (discount > 0) {
+        discText.textContent = `-₹${discount}`;
+        discRow.classList.remove("hidden");
+      } else {
+        discRow.classList.add("hidden");
+      }
+
+      document.getElementById("summary-total").textContent = `₹${total}`;
+      
+      // Save totals state temporarily for checkout page
+      const checkoutState = { subtotal, discount, shipping, total, couponCode: activeCoupon ? activeCoupon.code : null };
+      sessionStorage.setItem("mn_checkout_summary", JSON.stringify(checkoutState));
+    }
+
+    function applyCoupon() {
+      const codeInput = document.getElementById("coupon-code-input").value.trim().toUpperCase();
+      const subtotal = parseInt(document.getElementById("summary-subtotal").textContent.replace("₹", ""));
+      
+      if (!codeInput) {
+        showCouponFeedback("Please enter a coupon code.", "error");
+        return;
+      }
+
+      const coupons = LocalDb.getCoupons();
+      const coup = coupons.find(c => c.code === codeInput);
+
+      if (!coup) {
+        showCouponFeedback("Invalid coupon code.", "error");
+        activeCoupon = null;
+        sessionStorage.removeItem("mn_applied_coupon");
+        renderCart();
+        return;
+      }
+
+      if (subtotal < coup.minCart) {
+        showCouponFeedback(`Min cart value of ₹${coup.minCart} required for this coupon.`, "error");
+        activeCoupon = null;
+        sessionStorage.removeItem("mn_applied_coupon");
+        renderCart();
+        return;
+      }
+
+      activeCoupon = coup;
+      sessionStorage.setItem("mn_applied_coupon", JSON.stringify(coup));
+      showCouponFeedback(`Success! Coupon "${coup.code}" applied.`, "success");
+      renderCart();
+    }
+
+    function showCouponFeedback(msg, type) {
+      const fb = document.getElementById("coupon-feedback");
+      if (!fb) return;
+      fb.textContent = msg;
+      fb.classList.remove("hidden", "text-red-500", "text-green-600");
+      fb.classList.add(type === "success" ? "text-green-600" : "text-red-500");
+    }
+  </script>
+</body>
+</html>

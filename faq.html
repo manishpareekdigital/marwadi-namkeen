@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ - सामान्य प्रश्न | Marwadi Namkeen Help Center</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            saffron: {
+              50: '#fffbf0',
+              100: '#fffae0',
+              500: '#F28500',
+              600: '#E07B00',
+              700: '#C76D00',
+            },
+            brandred: {
+              50: '#fff5f5',
+              100: '#ffe3e3',
+              500: '#8B0000',
+              600: '#730000',
+              700: '#5C0000',
+            },
+            gold: {
+              500: '#D4AF37',
+              600: '#C59B27',
+              700: '#A37F1F',
+            },
+            dark: '#1A0D00'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="page-fade-in antialiased bg-gray-50/50">
+
+  <!-- Header Placeholder -->
+  <div id="header-placeholder"></div>
+
+  <!-- Hero Banner -->
+  <div class="bg-red-gradient text-white py-16 text-center border-b border-gold-500">
+    <h2 class="text-3xl font-extrabold font-tiro text-white tracking-wide" data-t="faq">FAQ</h2>
+    <p class="text-xs text-gold-500 mt-2">Find quick answers to common queries</p>
+  </div>
+
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-4">
+    
+    <!-- FAQ Accordion Item 1 -->
+    <div class="bg-white border rounded-2xl overflow-hidden shadow-sm transition-all">
+      <button onclick="toggleFaq(1)" class="w-full text-left p-5 font-bold font-tiro text-xs sm:text-sm text-gray-800 flex justify-between items-center focus:outline-none hover:bg-gray-50/50">
+        <span>Q1. क्या ऑर्डर करने की कोई न्यूनतम मात्रा (Minimum Quantity) है?</span>
+        <span id="faq-icon-1" class="text-saffron-500 font-extrabold text-lg transition-transform duration-200">+</span>
+      </button>
+      <div id="faq-ans-1" class="hidden p-5 border-t text-xs text-gray-600 font-tiro leading-relaxed bg-gray-50/30">
+        हां, हमारे सभी उत्पादों के लिए न्यूनतम ऑर्डर मात्रा **1 किलोग्राम (1 KG)** है। आप वजन चयनकर्ता के माध्यम से 1 किलो, 2 किलो या 5 किलो चुन सकते हैं।
+        <br><br>
+        Yes, the minimum order quantity for each product is **1 KG**. You can select from 1 KG, 2 KG, or 5 KG sizes on the product details page.
+      </div>
+    </div>
+
+    <!-- FAQ Accordion Item 2 -->
+    <div class="bg-white border rounded-2xl overflow-hidden shadow-sm transition-all">
+      <button onclick="toggleFaq(2)" class="w-full text-left p-5 font-bold font-tiro text-xs sm:text-sm text-gray-800 flex justify-between items-center focus:outline-none hover:bg-gray-50/50">
+        <span>Q2. क्या मैं कैश ऑन डिलीवरी (COD) का चयन कर सकता हूँ?</span>
+        <span id="faq-icon-2" class="text-saffron-500 font-extrabold text-lg transition-transform duration-200">+</span>
+      </button>
+      <div id="faq-ans-2" class="hidden p-5 border-t text-xs text-gray-600 font-tiro leading-relaxed bg-gray-50/30">
+        नहीं, सुरक्षा और तीव्र प्रसंस्करण सुनिश्चित करने के लिए हम कैश ऑन डिलीवरी (COD) स्वीकार नहीं करते हैं। हम केवल Razorpay द्वारा सुरक्षित ऑनलाइन भुगतान (UPI, GPay, PhonePe, Paytm, डेबिट/क्रेडिट कार्ड, और नेट बैंकिंग) स्वीकार करते हैं।
+        <br><br>
+        No, to ensure fast processing and security, we accept online prepayments only. You can securely pay online via UPI, Google Pay, PhonePe, Cards, or Net Banking.
+      </div>
+    </div>
+
+    <!-- FAQ Accordion Item 3 -->
+    <div class="bg-white border rounded-2xl overflow-hidden shadow-sm transition-all">
+      <button onclick="toggleFaq(3)" class="w-full text-left p-5 font-bold font-tiro text-xs sm:text-sm text-gray-800 flex justify-between items-center focus:outline-none hover:bg-gray-50/50">
+        <span>Q3. डिलीवरी में कितना समय लगेगा? (Estimated Shipping Duration)</span>
+        <span id="faq-icon-3" class="text-saffron-500 font-extrabold text-lg transition-transform duration-200">+</span>
+      </button>
+      <div id="faq-ans-3" class="hidden p-5 border-t text-xs text-gray-600 font-tiro leading-relaxed bg-gray-50/30">
+        जयपुर शहर में लोकल एक्सप्रेस डिलीवरी **30 से 45 मिनट** के भीतर हो जाती है। जयपुर से बाहर, अन्य सभी राज्यों में डिलीवरी में **3 से 5 कार्य दिवस** (working days) का समय लगता है।
+        <br><br>
+        Local express delivery in Jaipur takes **30-45 minutes**. For the rest of India, standard shipping takes **3-5 working days**.
+      </div>
+    </div>
+
+    <!-- FAQ Accordion Item 4 -->
+    <div class="bg-white border rounded-2xl overflow-hidden shadow-sm transition-all">
+      <button onclick="toggleFaq(4)" class="w-full text-left p-5 font-bold font-tiro text-xs sm:text-sm text-gray-800 flex justify-between items-center focus:outline-none hover:bg-gray-50/50">
+        <span>Q4. क्या आपका नमकीन लंबे समय तक ताज़ा रहता है?</span>
+        <span id="faq-icon-4" class="text-saffron-500 font-extrabold text-lg transition-transform duration-200">+</span>
+      </button>
+      <div id="faq-ans-4" class="hidden p-5 border-t text-xs text-gray-600 font-tiro leading-relaxed bg-gray-50/30">
+        हां! हमारी नमकीन उच्च गुणवत्ता वाले वैक्यूम पैकेट में पैक की जाती है जो इसकी ताजगी को 3 महीने से अधिक समय तक सुरक्षित रखती है। पैकेट खोलने के बाद कृपया इसे एयर-टाइट कंटेनर में रखें।
+        <br><br>
+        Yes, our namkeen is packed in high-quality vacuum pouches which preserve crispness for up to 3 months. Once opened, store in an airtight jar.
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer Placeholder -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script>
+    function toggleFaq(idx) {
+      const ans = document.getElementById(`faq-ans-${idx}`);
+      const icon = document.getElementById(`faq-icon-${idx}`);
+      if (ans && icon) {
+        ans.classList.toggle("hidden");
+        icon.textContent = ans.classList.contains("hidden") ? "+" : "-";
+      }
+    }
+  </script>
+</body>
+</html>

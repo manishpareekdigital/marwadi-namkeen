@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>चेकआउट | Secure Checkout Marwadi Namkeen</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            saffron: {
+              50: '#fffbf0',
+              100: '#fffae0',
+              500: '#F28500',
+              600: '#E07B00',
+              700: '#C76D00',
+            },
+            brandred: {
+              50: '#fff5f5',
+              100: '#ffe3e3',
+              500: '#8B0000',
+              600: '#730000',
+              700: '#5C0000',
+            },
+            gold: {
+              500: '#D4AF37',
+              600: '#C59B27',
+              700: '#A37F1F',
+            },
+            dark: '#1A0D00'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <!-- Razorpay Standard Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body class="page-fade-in antialiased bg-gray-50/50">
+
+  <!-- Header Placeholder -->
+  <div id="header-placeholder"></div>
+
+  <div class="bg-red-gradient text-white py-12 text-center border-b border-gold-500">
+    <h2 class="text-3xl font-extrabold font-tiro text-white tracking-wide" data-t="checkout_title">सुरक्षित चेकआउट</h2>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <form id="checkout-form" class="grid grid-cols-1 lg:grid-cols-12 gap-8" onsubmit="handleCheckoutSubmit(event)">
+      
+      <!-- Left: Delivery Information -->
+      <div class="lg:col-span-8 bg-white p-6 sm:p-10 rounded-3xl border border-gray-100 shadow-sm space-y-6">
+        <div class="flex justify-between items-center pb-3 border-b">
+          <h3 class="font-bold text-lg text-brandred-600 font-tiro" data-t="shipping_details">डिलिवरी पता</h3>
+          <select id="saved-addresses-dropdown" onchange="loadSavedAddress(this.value)" class="border rounded-full px-4 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-saffron-500 hidden">
+            <option value="">Select Saved Address</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs text-gray-700">
+          <div class="space-y-1.5">
+            <label class="font-bold uppercase" data-t="full_name">पूरा नाम</label>
+            <input type="text" id="cust-name" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required>
+          </div>
+          <div class="space-y-1.5">
+            <label class="font-bold uppercase" data-t="phone_number">मोबाइल नंबर</label>
+            <input type="tel" id="cust-phone" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required pattern="[0-9]{10}">
+          </div>
+          <div class="sm:col-span-2 space-y-1.5">
+            <label class="font-bold uppercase" data-t="address_line">गली/मोहल्ला/मकान नंबर</label>
+            <input type="text" id="cust-address" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required>
+          </div>
+          <div class="space-y-1.5">
+            <label class="font-bold uppercase" data-t="city">शहर</label>
+            <input type="text" id="cust-city" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required>
+          </div>
+          <div class="space-y-1.5">
+            <label class="font-bold uppercase" data-t="state">राज्य</label>
+            <input type="text" id="cust-state" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required>
+          </div>
+          <div class="space-y-1.5">
+            <label class="font-bold uppercase" data-t="pincode">पिनकोड</label>
+            <input type="text" id="cust-pincode" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required pattern="[0-9]{6}">
+          </div>
+          <div class="space-y-1.5">
+            <label class="font-bold uppercase">Email Address</label>
+            <input type="email" id="cust-email" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required>
+          </div>
+          <div class="sm:col-span-2 space-y-1.5">
+            <label class="font-bold uppercase">Order Notes (Optional)</label>
+            <textarea id="order-notes" rows="2" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Summary & Online Payment Details -->
+      <div class="lg:col-span-4 space-y-6">
+        <!-- Order items summary simple widget -->
+        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+          <h4 class="font-bold text-xs text-gray-700 uppercase tracking-widest">Items Summary</h4>
+          <div class="space-y-2 max-h-40 overflow-y-auto text-[10px]" id="checkout-items-list">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Payment Details Card -->
+        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+          <h4 class="font-bold text-xs text-gray-700 uppercase tracking-widest" data-t="payment_method">भुगतान का प्रकार</h4>
+          
+          <!-- Explicitly Online Payment Notice -->
+          <div class="bg-saffron-50 border border-saffron-200 rounded-2xl p-4 text-[10px] space-y-2">
+            <div class="flex items-center space-x-2 text-saffron-700 font-bold">
+              <span>🔒</span>
+              <span data-t="online_only">केवल ऑनलाइन भुगतान (UPI/कार्ड्स/नेट बैंकिंग)</span>
+            </div>
+            <p class="text-gray-500 font-tiro leading-relaxed">सुरक्षित Razorpay पेमेंट गेटवे। हम सुरक्षा सुनिश्चित करने के लिए कैश ऑन डिलीवरी (COD) स्वीकार नहीं करते हैं।</p>
+          </div>
+
+          <!-- Razorpay checkout summary totals -->
+          <div class="space-y-2 border-t pt-3 text-xs text-gray-600">
+            <div class="flex justify-between">
+              <span>Total Items Cost:</span>
+              <span id="chk-subtotal">₹0</span>
+            </div>
+            <div class="flex justify-between text-red-600 hidden" id="chk-discount-row">
+              <span>Discount Applied:</span>
+              <span id="chk-discount">-₹0</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Shipping Fee:</span>
+              <span id="chk-shipping">₹0</span>
+            </div>
+            <div class="flex justify-between font-extrabold text-base text-brandred-700 border-t pt-2 mt-2">
+              <span data-t="total">कुल</span>
+              <span id="chk-total">₹0</span>
+            </div>
+          </div>
+
+          <!-- Submit Order CTA -->
+          <button type="submit" class="w-full bg-brandred-700 hover:bg-brandred-800 text-white font-bold py-4 rounded-full shadow-lg text-xs uppercase tracking-wider transition-colors animate-pulse-gold" data-t="place_order">
+            ऑर्डर सबमिट करें और भुगतान करें
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </main>
+
+  <!-- Razorpay Simulation Modal Overlay -->
+  <div id="razorpay-sim-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 shadow-2xl border-t-8 border-brandred-600 text-center space-y-6">
+      <div class="flex justify-between items-center border-b pb-3 text-left">
+        <div>
+          <h4 class="font-bold text-sm text-gray-800">Razorpay Secure</h4>
+          <p class="text-[9px] text-gray-400">Merchant: Marwadi Namkeen</p>
+        </div>
+        <span class="text-xs font-bold text-brandred-600" id="sim-pay-amount">₹0</span>
+      </div>
+
+      <p class="text-xs text-gray-600 leading-relaxed font-tiro">सुरक्षित ऑनलाइन भुगतान सत्यापित करने के लिए कृपया एक भुगतान विधि चुनें:</p>
+      
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <button onclick="simulateSuccessPayment('UPI / Google Pay')" class="border p-3 rounded-xl hover:border-brandred-600 hover:bg-red-50/50 transition-colors font-bold">UPI / GPay</button>
+        <button onclick="simulateSuccessPayment('Credit Card')" class="border p-3 rounded-xl hover:border-brandred-600 hover:bg-red-50/50 transition-colors font-bold">Card</button>
+        <button onclick="simulateSuccessPayment('PhonePe / Paytm')" class="border p-3 rounded-xl hover:border-brandred-600 hover:bg-red-50/50 transition-colors font-bold">Wallet / Net</button>
+        <button onclick="closePaymentSim()" class="border p-3 rounded-xl hover:bg-gray-100 transition-colors font-bold text-gray-400">Cancel</button>
+      </div>
+
+      <div class="text-[8px] text-gray-400 font-semibold">Protected by 256-bit SSL encryption &bull; Razorpay Certified</div>
+    </div>
+  </div>
+
+  <!-- Footer Placeholder -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script>
+    let summary = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Validate cart items
+      if (AppState.getCart().length === 0) {
+        window.location.href = "cart.html";
+        return;
+      }
+
+      // Load checkout totals
+      const savedSummary = sessionStorage.getItem("mn_checkout_summary");
+      if (!savedSummary) {
+        window.location.href = "cart.html";
+        return;
+      }
+
+      summary = JSON.parse(savedSummary);
+
+      // Render totals
+      document.getElementById("chk-subtotal").textContent = `₹${summary.subtotal}`;
+      document.getElementById("chk-shipping").textContent = summary.shipping === 0 ? "FREE" : `₹${summary.shipping}`;
+      if (summary.discount > 0) {
+        document.getElementById("chk-discount").textContent = `-₹${summary.discount}`;
+        document.getElementById("chk-discount-row").classList.remove("hidden");
+      }
+      document.getElementById("chk-total").textContent = `₹${summary.total}`;
+
+      // Render item list simple text
+      const chkItems = document.getElementById("checkout-items-list");
+      const cart = AppState.getCart();
+      const products = LocalDb.getProducts();
+      const lang = AppState.getLang();
+
+      chkItems.innerHTML = cart.map(item => {
+        const p = products.find(prod => prod.id === item.id);
+        const name = p ? p.name[lang] : item.id;
+        return `
+          <div class="flex justify-between py-1 border-b border-gray-50 font-tiro">
+            <span>${name} (${item.weight} KG) x ${item.qty}</span>
+            <span>₹${(p ? p.pricePerKg : 0) * item.weight * item.qty}</span>
+          </div>
+        `;
+      }).join('');
+
+      // Populate user info if logged in
+      const user = AppState.getUser();
+      if (user) {
+        document.getElementById("cust-name").value = user.name || "";
+        document.getElementById("cust-email").value = user.email || "";
+        
+        // Show saved addresses dropdown if user has saved addresses
+        const dbUsers = LocalDb.getUsers();
+        const fullUser = dbUsers.find(u => u.email === user.email);
+        if (fullUser && fullUser.addresses && fullUser.addresses.length > 0) {
+          const dropdown = document.getElementById("saved-addresses-dropdown");
+          dropdown.classList.remove("hidden");
+          dropdown.innerHTML = '<option value="">Select Saved Address</option>' + fullUser.addresses.map((addr, idx) => `
+            <option value="${idx}">${addr.addressLine}, ${addr.city}</option>
+          `).join('');
+        }
+      }
+    });
+
+    function loadSavedAddress(idx) {
+      if (idx === "") return;
+      const user = AppState.getUser();
+      const dbUsers = LocalDb.getUsers();
+      const fullUser = dbUsers.find(u => u.email === user.email);
+      if (fullUser && fullUser.addresses[idx]) {
+        const addr = fullUser.addresses[idx];
+        document.getElementById("cust-name").value = addr.name;
+        document.getElementById("cust-phone").value = addr.phone;
+        document.getElementById("cust-address").value = addr.addressLine;
+        document.getElementById("cust-city").value = addr.city;
+        document.getElementById("cust-state").value = addr.state;
+        document.getElementById("cust-pincode").value = addr.pincode;
+      }
+    }
+
+    function handleCheckoutSubmit(e) {
+      e.preventDefault();
+      
+      // Trigger Razorpay Modal UI Simulation
+      document.getElementById("sim-pay-amount").textContent = `₹${summary.total}`;
+      document.getElementById("razorpay-sim-modal").classList.remove("hidden");
+    }
+
+    function closePaymentSim() {
+      document.getElementById("razorpay-sim-modal").classList.add("hidden");
+      showToast("Payment Cancelled / भुगतान निरस्त", "error");
+    }
+
+    function simulateSuccessPayment(methodUsed) {
+      // Hide simulated Payment Window
+      document.getElementById("razorpay-sim-modal").classList.add("hidden");
+
+      // Extract Address Info
+      const orderAddress = {
+        name: document.getElementById("cust-name").value.trim(),
+        phone: document.getElementById("cust-phone").value.trim(),
+        addressLine: document.getElementById("cust-address").value.trim(),
+        city: document.getElementById("cust-city").value.trim(),
+        state: document.getElementById("cust-state").value.trim(),
+        pincode: document.getElementById("cust-pincode").value.trim(),
+        email: document.getElementById("cust-email").value.trim()
+      };
+
+      // Create Order ID
+      const orderId = "MN-" + Math.floor(100000 + Math.random() * 900000);
+      
+      // Build Order Object
+      const newOrder = {
+        id: orderId,
+        date: new Date().toISOString(),
+        items: AppState.getCart(),
+        address: orderAddress,
+        subtotal: summary.subtotal,
+        discount: summary.discount,
+        shipping: summary.shipping,
+        total: summary.total,
+        couponCode: summary.couponCode,
+        status: "placed",
+        paymentMethod: methodUsed,
+        paymentStatus: "paid",
+        notes: document.getElementById("order-notes").value.trim(),
+        trackingTimeline: [
+          {
+            status: "placed",
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            desc: {
+              hi: "ऑर्डर प्राप्त हुआ",
+              en: "Order request received successfully"
+            }
+          }
+        ]
+      };
+
+      // Save Order to simulated database
+      const orders = LocalDb.getOrders();
+      orders.push(newOrder);
+      LocalDb.saveOrders(orders);
+
+      // Save delivery address to customer profile if user logged in
+      const loggedUser = AppState.getUser();
+      if (loggedUser) {
+        let dbUsers = LocalDb.getUsers();
+        let uIdx = dbUsers.findIndex(u => u.email === loggedUser.email);
+        if (uIdx !== -1) {
+          if (!dbUsers[uIdx].addresses) dbUsers[uIdx].addresses = [];
+          
+          // Check if address already exists to avoid duplication
+          const exists = dbUsers[uIdx].addresses.some(a => a.addressLine === orderAddress.addressLine);
+          if (!exists) {
+            dbUsers[uIdx].addresses.push(orderAddress);
+            LocalDb.saveUsers(dbUsers);
+          }
+        }
+      }
+
+      // Start the tracking status simulation thread (in JS engine background)
+      startOrderTrackingSimulation(orderId);
+
+      // Clear applied cart variables
+      AppState.clearCart();
+      sessionStorage.removeItem("mn_applied_coupon");
+      sessionStorage.removeItem("mn_checkout_summary");
+
+      // Notify and redirect to track screen
+      showToast("Payment Successful! Order Placed. / भुगतान सफल हुआ!", "success");
+      setTimeout(() => {
+        window.location.href = `track.html?id=${orderId}`;
+      }, 1500);
+    }
+  </script>
+</body>
+</html>

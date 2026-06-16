@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ऑर्डर ट्रैकिंग | Blinkit-style Live Tracking</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            saffron: {
+              50: '#fffbf0',
+              100: '#fffae0',
+              500: '#F28500',
+              600: '#E07B00',
+              700: '#C76D00',
+            },
+            brandred: {
+              50: '#fff5f5',
+              100: '#ffe3e3',
+              500: '#8B0000',
+              600: '#730000',
+              700: '#5C0000',
+            },
+            gold: {
+              500: '#D4AF37',
+              600: '#C59B27',
+              700: '#A37F1F',
+            },
+            dark: '#1A0D00'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="page-fade-in antialiased bg-gray-50/50">
+
+  <!-- Header Placeholder -->
+  <div id="header-placeholder"></div>
+
+  <div class="bg-red-gradient text-white py-12 text-center border-b border-gold-500">
+    <h2 class="text-3xl font-extrabold font-tiro text-white tracking-wide" data-t="track_order">ऑर्डर ट्रैक करें</h2>
+  </div>
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Tracking Search Form -->
+    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4 max-w-lg mx-auto mb-8">
+      <h3 class="font-bold text-sm text-brandred-600 font-tiro uppercase text-center">Track Delivery Status</h3>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input type="text" id="track-search-input" data-t="track_input_placeholder" placeholder="ऑर्डर आईडी या मोबाइल नंबर दर्ज करें" class="w-full border rounded-full px-5 py-3 text-xs focus:outline-none focus:ring-1 focus:ring-saffron-500 bg-gray-50 font-bold uppercase">
+        <button onclick="handleTrackSearch()" class="bg-saffron-500 hover:bg-saffron-600 text-white font-bold text-xs px-6 py-3 rounded-full shadow-md transition-colors" data-t="track_button">ट्रैक करें</button>
+      </div>
+      <p class="text-[10px] text-gray-400 text-center">Enter your order ID (e.g. MN-123456) or your 10-digit mobile number.</p>
+    </div>
+
+    <!-- Active Tracking Dashboard -->
+    <div id="active-tracker-container" class="hidden bg-white p-6 sm:p-10 rounded-3xl border border-gray-100 shadow-xl space-y-8">
+      <!-- Top Order Details Header -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-6 gap-4">
+        <div>
+          <span class="text-xs text-gray-400 block font-bold">ORDER ID: <span class="text-brandred-600 font-mono" id="track-order-id">MN-XXXXXX</span></span>
+          <h4 class="text-lg font-bold font-tiro text-gray-800 mt-1">Status: <span id="track-main-status-label" class="text-saffron-600 font-tiro">Placed</span></h4>
+        </div>
+        <div class="text-left sm:text-right">
+          <span class="text-xs text-gray-400 block font-bold">ESTIMATED ARRIVAL (ETA)</span>
+          <span class="text-green-600 font-extrabold text-sm sm:text-base animate-pulse-gold block" id="track-eta">45 Minutes (Jaipur Local)</span>
+        </div>
+      </div>
+
+      <!-- Zepto/Blinkit Style Horizontal/Vertical Progress Bar -->
+      <div class="space-y-4">
+        <h4 class="font-bold text-xs text-gray-700 uppercase tracking-widest" data-t="track_status">ऑर्डर की स्थिति</h4>
+        
+        <!-- Live timeline bar -->
+        <div class="grid grid-cols-1 md:grid-cols-7 gap-4 md:gap-0 pt-4">
+          <!-- Step 1: Placed -->
+          <div class="flex md:flex-col items-center text-center relative" id="step-placed">
+            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold text-sm z-10 timeline-dot" id="dot-placed">✓</div>
+            <div class="ml-4 md:ml-0 md:mt-3 text-left md:text-center">
+              <h5 class="text-xs font-bold text-gray-700">Placed</h5>
+              <p class="text-[9px] text-gray-400" id="time-placed">--:--</p>
+            </div>
+          </div>
+          <!-- Step 2: Confirmed -->
+          <div class="flex md:flex-col items-center text-center relative" id="step-confirmed">
+            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold text-sm z-10 timeline-dot" id="dot-confirmed">✓</div>
+            <div class="ml-4 md:ml-0 md:mt-3 text-left md:text-center">
+              <h5 class="text-xs font-bold text-gray-700">Confirmed</h5>
+              <p class="text-[9px] text-gray-400" id="time-confirmed">--:--</p>
+            </div>
+          </div>
+          <!-- Step 3: Preparing -->
+          <div class="flex md:flex-col items-center text-center relative" id="step-preparing">
+            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold text-sm z-10 timeline-dot" id="dot-preparing">👨‍🍳</div>
+            <div class="ml-4 md:ml-0 md:mt-3 text-left md:text-center">
+              <h5 class="text-xs font-bold text-gray-700 font-tiro">Preparing</h5>
+              <p class="text-[9px] text-gray-400" id="time-preparing">--:--</p>
+            </div>
+          </div>
+          <!-- Step 4: Packed -->
+          <div class="flex md:flex-col items-center text-center relative" id="step-packed">
+            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold text-sm z-10 timeline-dot" id="dot-packed">📦</div>
+            <div class="ml-4 md:ml-0 md:mt-3 text-left md:text-center">
+              <h5 class="text-xs font-bold text-gray-700">Packed</h5>
+              <p class="text-[9px] text-gray-400" id="time-packed">--:--</p>
+            </div>
+          </div>
+          <!-- Step 5: Out For Delivery -->
+          <div class="flex md:flex-col items-center text-center relative" id="step-out_for_delivery">
+            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold text-sm z-10 timeline-dot" id="dot-out_for_delivery">🚚</div>
+            <div class="ml-4 md:ml-0 md:mt-3 text-left md:text-center">
+              <h5 class="text-xs font-bold text-gray-700">On The Way</h5>
+              <p class="text-[9px] text-gray-400" id="time-out_for_delivery">--:--</p>
+            </div>
+          </div>
+          <!-- Step 6: Near Location -->
+          <div class="flex md:flex-col items-center text-center relative" id="step-near_location">
+            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold text-sm z-10 timeline-dot" id="dot-near_location">📍</div>
+            <div class="ml-4 md:ml-0 md:mt-3 text-left md:text-center">
+              <h5 class="text-xs font-bold text-gray-700">Near You</h5>
+              <p class="text-[9px] text-gray-400" id="time-near_location">--:--</p>
+            </div>
+          </div>
+          <!-- Step 7: Delivered -->
+          <div class="flex md:flex-col items-center text-center relative" id="step-delivered">
+            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold text-sm z-10 timeline-dot" id="dot-delivered">🏠</div>
+            <div class="ml-4 md:ml-0 md:mt-3 text-left md:text-center">
+              <h5 class="text-xs font-bold text-gray-700">Delivered</h5>
+              <p class="text-[9px] text-gray-400" id="time-delivered">--:--</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action items: Print Invoice & Live Chat -->
+      <div class="border-t pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex items-center space-x-2 text-xs">
+          <span class="font-bold text-gray-500">Need Help?</span>
+          <a href="https://wa.me/918107116916?text=Help%20with%20order" target="_blank" class="text-green-500 font-bold hover:underline flex items-center space-x-0.5">
+            <span>WhatsApp Support</span>
+          </a>
+        </div>
+        <button onclick="printOrderInvoice()" class="bg-brandred-600 hover:bg-brandred-700 text-white font-bold text-xs px-6 py-2.5 rounded-full shadow-md flex items-center space-x-1.5 transition-colors">
+          <span>Print/Download Invoice</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hidden Invoice Container for printable view -->
+    <div id="hidden-invoice-print-area" class="hidden"></div>
+  </main>
+
+  <!-- Footer Placeholder -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script>
+    let activeOrder = null;
+
+    // Load initial ID from query params
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialId = urlParams.get("id");
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (initialId) {
+        document.getElementById("track-search-input").value = initialId;
+        searchAndRenderOrder(initialId);
+      }
+      
+      // Listen to status updates on page
+      window.addEventListener("orderStatusUpdated", () => {
+        if (activeOrder) {
+          searchAndRenderOrder(activeOrder.id);
+        }
+      });
+    });
+
+    function handleTrackSearch() {
+      const q = document.getElementById("track-search-input").value.trim().toUpperCase();
+      if (!q) {
+        showToast("Please enter Order ID or Mobile Number", "error");
+        return;
+      }
+      searchAndRenderOrder(q);
+    }
+
+    function searchAndRenderOrder(query) {
+      const orders = LocalDb.getOrders();
+      
+      // Match by ID or Mobile
+      let matched = orders.find(o => o.id === query);
+      if (!matched) {
+        matched = orders.find(o => o.address.phone === query);
+      }
+
+      if (!matched) {
+        showToast("No active order found for this query.", "error");
+        document.getElementById("active-tracker-container").classList.add("hidden");
+        activeOrder = null;
+        return;
+      }
+
+      activeOrder = matched;
+      
+      // Reveal details
+      document.getElementById("active-tracker-container").classList.remove("hidden");
+      document.getElementById("track-order-id").textContent = matched.id;
+      
+      const lang = AppState.getLang();
+      document.getElementById("track-main-status-label").textContent = AppState.t("status_" + matched.status);
+      
+      // Calculate ETA
+      const isJaipur = matched.address.city.toLowerCase().includes("jaipur");
+      document.getElementById("track-eta").textContent = isJaipur ? "30-45 Minutes (Express Delivery)" : "3-5 Days (All India Post/Courier)";
+      
+      // Update Dot Timelines
+      updateTimelineUI(matched);
+
+      // Load into printable template
+      document.getElementById("hidden-invoice-print-area").innerHTML = generateInvoiceHtml(matched);
+    }
+
+    function updateTimelineUI(order) {
+      const states = ["placed", "confirmed", "preparing", "packed", "out_for_delivery", "near_location", "delivered"];
+      const activeIndex = states.indexOf(order.status);
+
+      states.forEach((state, idx) => {
+        const dot = document.getElementById(`dot-${state}`);
+        const text = document.querySelector(`#step-${state} h5`);
+        const timeEl = document.getElementById(`time-${state}`);
+        
+        // Reset
+        dot.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm z-10 timeline-dot";
+        text.className = "text-xs font-semibold text-gray-400";
+        timeEl.textContent = "--:--";
+
+        // Check timeline record for timestamp
+        const timelineRecord = order.trackingTimeline.find(t => t.status === state);
+        if (timelineRecord) {
+          timeEl.textContent = timelineRecord.time;
+        }
+
+        if (idx <= activeIndex) {
+          // Completed or active state
+          dot.classList.add("bg-saffron-500", "text-white", "timeline-dot-active");
+          text.className = "text-xs font-bold text-saffron-600";
+          if (idx === activeIndex) {
+            dot.classList.add("animate-pulse-gold", "border-2", "border-gold-500");
+          }
+        } else {
+          // Pending
+          dot.classList.add("bg-gray-200", "text-gray-500");
+        }
+      });
+    }
+
+    function printOrderInvoice() {
+      if (!activeOrder) return;
+      const printableContent = document.getElementById("printable-invoice");
+      if (!printableContent) return;
+
+      const printWindow = window.open("", "_blank");
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Invoice - ${activeOrder.id}</title>
+            <script src="https://cdn.tailwindcss.com"><\/script>
+          </head>
+          <body class="bg-white p-6" onload="window.print(); window.close();">
+            ${printableContent.outerHTML}
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+  </script>
+</body>
+</html>

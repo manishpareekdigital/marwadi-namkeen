@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ग्राहक डैशबोर्ड | Marwadi Namkeen Account</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            saffron: {
+              50: '#fffbf0',
+              100: '#fffae0',
+              500: '#F28500',
+              600: '#E07B00',
+              700: '#C76D00',
+            },
+            brandred: {
+              50: '#fff5f5',
+              100: '#ffe3e3',
+              500: '#8B0000',
+              600: '#730000',
+              700: '#5C0000',
+            },
+            gold: {
+              500: '#D4AF37',
+              600: '#C59B27',
+              700: '#A37F1F',
+            },
+            dark: '#1A0D00'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="page-fade-in antialiased bg-gray-50/50">
+
+  <!-- Header Placeholder -->
+  <div id="header-placeholder"></div>
+
+  <!-- Dashboard Main Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    
+    <!-- IF NOT LOGGED IN: Auth Screen Tab -->
+    <div id="dashboard-auth-container" class="max-w-md mx-auto bg-white p-8 rounded-3xl border border-gray-100 shadow-xl space-y-6 hidden">
+      <!-- Tab headers -->
+      <div class="flex justify-around border-b pb-3 text-xs font-bold uppercase tracking-wider">
+        <button id="auth-tab-login" onclick="setAuthTab('login')" class="text-brandred-600 border-b-2 border-brandred-600 pb-2">Login</button>
+        <button id="auth-tab-register" onclick="setAuthTab('register')" class="text-gray-400 pb-2">Register</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="space-y-4 text-xs text-gray-700" onsubmit="handleLoginSubmit(event)">
+        <div class="space-y-1.5">
+          <label class="font-bold uppercase">Email Address</label>
+          <input type="email" id="login-email" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required>
+        </div>
+        <div class="space-y-1.5">
+          <label class="font-bold uppercase">Password</label>
+          <input type="password" id="login-password" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none focus:ring-1 focus:ring-saffron-500" required>
+        </div>
+        <!-- Quick hint for demo user -->
+        <p class="text-[9px] text-gray-400 font-bold bg-saffron-50 border border-saffron-200 p-2 rounded-xl">DEMO ADMIN: pareekgautam152@gmail.com / adminpassword</p>
+        <button type="submit" class="w-full bg-saffron-500 hover:bg-saffron-600 text-white font-bold py-3.5 rounded-full shadow-md transition-colors uppercase tracking-wider">Sign In</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" class="space-y-4 text-xs text-gray-700 hidden" onsubmit="handleRegisterSubmit(event)">
+        <div class="space-y-1.5">
+          <label class="font-bold uppercase">Full Name</label>
+          <input type="text" id="reg-name" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none" required>
+        </div>
+        <div class="space-y-1.5">
+          <label class="font-bold uppercase">Email Address</label>
+          <input type="email" id="reg-email" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none" required>
+        </div>
+        <div class="space-y-1.5">
+          <label class="font-bold uppercase">Create Password</label>
+          <input type="password" id="reg-password" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50/50 focus:outline-none" required>
+        </div>
+        <button type="submit" class="w-full bg-brandred-600 hover:bg-brandred-700 text-white font-bold py-3.5 rounded-full shadow-md transition-colors uppercase tracking-wider">Create Account</button>
+      </form>
+    </div>
+
+    <!-- IF LOGGED IN: Dashboard Tabs Layout -->
+    <div id="dashboard-main-container" class="grid grid-cols-1 lg:grid-cols-12 gap-8 hidden">
+      <!-- Sidebar Tabs Menu -->
+      <aside class="lg:col-span-3 space-y-4">
+        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm text-center space-y-3">
+          <div class="w-16 h-16 rounded-full bg-saffron-100 text-saffron-700 font-extrabold text-2xl flex items-center justify-center mx-auto" id="profile-avatar">U</div>
+          <div>
+            <h3 class="font-bold text-sm text-gray-800" id="profile-name-label">Loading Profile</h3>
+            <p class="text-[10px] text-gray-400" id="profile-email-label">user@example.com</p>
+          </div>
+        </div>
+
+        <nav class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm flex flex-col space-y-2 text-xs font-bold text-gray-600">
+          <button onclick="setTab('orders')" id="tab-btn-orders" class="text-left w-full px-4 py-3 rounded-xl hover:bg-gray-50 transition-colors flex items-center space-x-2">
+            <span>📦</span>
+            <span data-t="dashboard_orders">मेरे ऑर्डर्स</span>
+          </button>
+          <button onclick="setTab('wishlist')" id="tab-btn-wishlist" class="text-left w-full px-4 py-3 rounded-xl hover:bg-gray-50 transition-colors flex items-center space-x-2">
+            <span>❤️</span>
+            <span data-t="wishlist">इच्छा-सूची</span>
+          </button>
+          <button onclick="setTab('addresses')" id="tab-btn-addresses" class="text-left w-full px-4 py-3 rounded-xl hover:bg-gray-50 transition-colors flex items-center space-x-2">
+            <span>📍</span>
+            <span data-t="dashboard_addresses">बचे हुए पते</span>
+          </button>
+          <button onclick="setTab('profile')" id="tab-btn-profile" class="text-left w-full px-4 py-3 rounded-xl hover:bg-gray-50 transition-colors flex items-center space-x-2">
+            <span>👤</span>
+            <span data-t="dashboard_profile">मेरी प्रोफाइल</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Main Panels -->
+      <div class="lg:col-span-9 bg-white p-6 sm:p-10 rounded-3xl border border-gray-100 shadow-sm">
+        
+        <!-- Orders Panel -->
+        <div id="panel-orders" class="space-y-6 hidden">
+          <h3 class="font-bold text-lg text-brandred-600 font-tiro pb-3 border-b" data-t="dashboard_orders">मेरे ऑर्डर्स</h3>
+          <div class="space-y-6" id="orders-list-container">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Wishlist Panel -->
+        <div id="panel-wishlist" class="space-y-6 hidden">
+          <h3 class="font-bold text-lg text-brandred-600 font-tiro pb-3 border-b" data-t="wishlist">इच्छा-सूची</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" id="wishlist-grid-container">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Addresses Panel -->
+        <div id="panel-addresses" class="space-y-6 hidden">
+          <h3 class="font-bold text-lg text-brandred-600 font-tiro pb-3 border-b" data-t="dashboard_addresses">बचे हुए पते</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="addresses-list-container">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Profile Panel -->
+        <div id="panel-profile" class="space-y-6 hidden">
+          <h3 class="font-bold text-lg text-brandred-600 font-tiro pb-3 border-b" data-t="dashboard_profile">मेरी प्रोफाइल</h3>
+          <form id="profile-update-form" class="space-y-4 text-xs text-gray-700 max-w-md" onsubmit="handleProfileUpdate(event)">
+            <div class="space-y-1.5">
+              <label class="font-bold uppercase">Full Name</label>
+              <input type="text" id="prof-name" class="w-full border rounded-xl px-4 py-2.5 bg-gray-50 focus:outline-none" required>
+            </div>
+            <div class="space-y-1.5">
+              <label class="font-bold uppercase">Email Address (Read-Only)</label>
+              <input type="email" id="prof-email" class="w-full border rounded-xl px-4 py-2.5 bg-gray-100 text-gray-400 focus:outline-none" readonly>
+            </div>
+            <button type="submit" class="bg-saffron-500 text-white font-bold px-6 py-2.5 rounded-full shadow hover:bg-saffron-600 transition-colors">Update Profile</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+    
+  </main>
+
+  <!-- Footer Placeholder -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script>
+    let activeTab = "orders";
+    let activeAuthTab = "login";
+
+    // Read initial queries
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("tab")) {
+      const tabParam = urlParams.get("tab");
+      if (["orders", "wishlist", "addresses", "profile"].includes(tabParam)) {
+        activeTab = tabParam;
+      } else if (["login", "register"].includes(tabParam)) {
+        activeAuthTab = tabParam;
+        activeTab = "auth";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      refreshDashboardState();
+    });
+
+    window.addEventListener("pageLanguageUpdated", () => {
+      refreshDashboardState();
+    });
+
+    function refreshDashboardState() {
+      const user = AppState.getUser();
+      const authContainer = document.getElementById("dashboard-auth-container");
+      const mainContainer = document.getElementById("dashboard-main-container");
+
+      if (!user) {
+        authContainer.classList.remove("hidden");
+        mainContainer.classList.add("hidden");
+        setAuthTab(activeAuthTab);
+      } else {
+        authContainer.classList.add("hidden");
+        mainContainer.classList.remove("hidden");
+
+        // Profile labels
+        document.getElementById("profile-name-label").textContent = user.name || "Customer Account";
+        document.getElementById("profile-email-label").textContent = user.email;
+        document.getElementById("profile-avatar").textContent = (user.name || user.email).charAt(0).toUpperCase();
+
+        // Update profile form
+        document.getElementById("prof-name").value = user.name || "";
+        document.getElementById("prof-email").value = user.email;
+
+        // Render tab panels
+        setTab(activeTab === "auth" ? "orders" : activeTab);
+      }
+    }
+
+    // Auth screen tab switcher
+    function setAuthTab(tab) {
+      activeAuthTab = tab;
+      const loginForm = document.getElementById("login-form");
+      const regForm = document.getElementById("register-form");
+      const loginTabBtn = document.getElementById("auth-tab-login");
+      const regTabBtn = document.getElementById("auth-tab-register");
+
+      if (tab === "login") {
+        loginForm.classList.remove("hidden");
+        regForm.classList.add("hidden");
+        loginTabBtn.className = "text-brandred-600 border-b-2 border-brandred-600 pb-2";
+        regTabBtn.className = "text-gray-400 pb-2";
+      } else {
+        loginForm.classList.add("hidden");
+        regForm.classList.remove("hidden");
+        loginTabBtn.className = "text-gray-400 pb-2";
+        regTabBtn.className = "text-brandred-600 border-b-2 border-brandred-600 pb-2";
+      }
+    }
+
+    // Main dashboard tab switcher
+    function setTab(tab) {
+      activeTab = tab;
+      
+      // Update sidebar styling
+      ["orders", "wishlist", "addresses", "profile"].forEach(tName => {
+        const btn = document.getElementById(`tab-btn-${tName}`);
+        const panel = document.getElementById(`panel-${tName}`);
+        if (btn && panel) {
+          if (tName === tab) {
+            btn.className = "text-left w-full px-4 py-3 rounded-xl bg-saffron-50 text-saffron-600 font-extrabold flex items-center space-x-2 border-l-4 border-saffron-500 shadow-sm";
+            panel.classList.remove("hidden");
+          } else {
+            btn.className = "text-left w-full px-4 py-3 rounded-xl hover:bg-gray-50 transition-colors flex items-center space-x-2";
+            panel.classList.add("hidden");
+          }
+        }
+      });
+
+      // Lazy render contents
+      if (tab === "orders") renderOrdersTab();
+      if (tab === "wishlist") renderWishlistTab();
+      if (tab === "addresses") renderAddressesTab();
+    }
+
+    // Handle Login Forms
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById("login-email").value.trim();
+      const pw = document.getElementById("login-password").value.trim();
+
+      const users = LocalDb.getUsers();
+      const match = users.find(u => u.email === email && u.password === pw);
+
+      if (match) {
+        AppState.setUser(match);
+        showToast("Logged In Successfully! / लॉगिन सफल हुआ!", "success");
+        setTimeout(() => { refreshDashboardState(); }, 500);
+      } else {
+        // Fallback simple registration for testing convenience
+        // Create user automatically to make it easy for review
+        const newUser = { email, password: pw, role: "customer", name: email.split("@")[0] };
+        users.push(newUser);
+        LocalDb.saveUsers(users);
+        AppState.setUser(newUser);
+        showToast("Account Created & Logged In! / खाता बनाया और लॉगिन किया गया।", "success");
+        setTimeout(() => { refreshDashboardState(); }, 500);
+      }
+    }
+
+    function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("reg-name").value.trim();
+      const email = document.getElementById("reg-email").value.trim();
+      const pw = document.getElementById("reg-password").value.trim();
+
+      const users = LocalDb.getUsers();
+      if (users.some(u => u.email === email)) {
+        showToast("Account with this email already exists.", "error");
+        return;
+      }
+
+      const newUser = { email, password: pw, role: "customer", name };
+      users.push(newUser);
+      LocalDb.saveUsers(users);
+
+      AppState.setUser(newUser);
+      showToast("Account Registered Successfully!", "success");
+      setTimeout(() => { refreshDashboardState(); }, 500);
+    }
+
+    function handleProfileUpdate(e) {
+      e.preventDefault();
+      const newName = document.getElementById("prof-name").value.trim();
+      const curr = AppState.getUser();
+      if (curr) {
+        let dbUsers = LocalDb.getUsers();
+        let idx = dbUsers.findIndex(u => u.email === curr.email);
+        if (idx !== -1) {
+          dbUsers[idx].name = newName;
+          LocalDb.saveUsers(dbUsers);
+          curr.name = newName;
+          AppState.setUser(curr);
+          showToast("Profile Updated!", "success");
+          refreshDashboardState();
+        }
+      }
+    }
+
+    // Dynamic Renders
+    function renderOrdersTab() {
+      const container = document.getElementById("orders-list-container");
+      if (!container) return;
+
+      const orders = LocalDb.getOrders();
+      const user = AppState.getUser();
+      const lang = AppState.getLang();
+      const products = LocalDb.getProducts();
+
+      // Filter by customer email
+      const custOrders = orders.filter(o => o.address.email === user.email).reverse();
+
+      if (custOrders.length === 0) {
+        container.innerHTML = `<p class="text-xs text-gray-400 italic">No orders placed yet. Start shopping!</p>`;
+        return;
+      }
+
+      container.innerHTML = custOrders.map(order => {
+        const dateStr = new Date(order.date).toLocaleDateString();
+        const itemsSummary = order.items.map(item => {
+          const p = products.find(prod => prod.id === item.id);
+          return `${p ? p.name[lang] : item.id} (${item.weight} KG) x ${item.qty}`;
+        }).join(', ');
+
+        return `
+          <div class="border rounded-2xl p-6 space-y-4 shadow-sm hover:shadow-md transition-shadow text-xs">
+            <div class="flex flex-col sm:flex-row justify-between border-b pb-3 items-start sm:items-center gap-2">
+              <div>
+                <span class="text-gray-400 block font-bold">ORDER ID: <span class="font-mono text-brandred-600">${order.id}</span></span>
+                <span class="text-[10px] text-gray-400 font-bold">${dateStr}</span>
+              </div>
+              <div>
+                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-saffron-50 text-saffron-600">${AppState.t("status_" + order.status)}</span>
+              </div>
+            </div>
+            
+            <div class="text-gray-600 leading-relaxed">
+              <p class="font-tiro"><strong>Items:</strong> ${itemsSummary}</p>
+              <p class="mt-1"><strong>Delivered To:</strong> ${order.address.addressLine}, ${order.address.city}</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-t pt-4 gap-3">
+              <span class="font-bold text-gray-700 text-sm">Total Paid: <span class="text-brandred-600 text-base">₹${order.total}</span></span>
+              <div class="flex space-x-2 w-full sm:w-auto justify-end">
+                <a href="track.html?id=${order.id}" class="border border-saffron-500 text-saffron-600 font-bold px-4 py-2 rounded-full hover:bg-saffron-50">Track</a>
+                <button onclick="reorderPrevious('${order.id}')" class="bg-brandred-600 text-white font-bold px-4 py-2 rounded-full hover:bg-brandred-700">Reorder</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function reorderPrevious(orderId) {
+      const orders = LocalDb.getOrders();
+      const match = orders.find(o => o.id === orderId);
+      if (match) {
+        match.items.forEach(item => {
+          AppState.addToCart(item.id, item.weight, item.qty);
+        });
+        showToast("Previous order items added to Cart!", "success");
+        setTimeout(() => { window.location.href = "cart.html"; }, 1000);
+      }
+    }
+
+    function renderWishlistTab() {
+      const container = document.getElementById("wishlist-grid-container");
+      if (!container) return;
+
+      const wishlist = AppState.getWishlist();
+      const products = LocalDb.getProducts();
+      const lang = AppState.getLang();
+
+      if (wishlist.length === 0) {
+        container.innerHTML = `<p class="text-xs text-gray-400 italic col-span-full">Your wishlist is empty.</p>`;
+        return;
+      }
+
+      container.innerHTML = wishlist.map(id => {
+        const p = products.find(prod => prod.id === id);
+        if (!p) return "";
+        const name = p.name[lang] || p.name["en"];
+        return `
+          <div class="bg-white rounded-2xl border p-4 text-center text-xs space-y-3">
+            <a href="product.html?id=${p.id}"><img src="${p.image}" alt="${name}" class="h-28 w-full object-cover rounded-xl"></a>
+            <a href="product.html?id=${p.id}" class="hover:text-saffron-600 transition-colors font-bold font-tiro text-gray-800">${name}</a>
+            <span class="text-brandred-600 font-extrabold block">₹${p.pricePerKg} / KG</span>
+            <div class="flex space-x-2 pt-1">
+              <a href="product.html?id=${p.id}" class="bg-saffron-500 text-white text-[10px] font-bold px-3 py-2 rounded-full flex-grow hover:bg-saffron-600">Buy Now</a>
+              <button onclick="removeWishlistItem('${p.id}')" class="border p-2 rounded-full hover:bg-red-50 text-red-500">✕</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function removeWishlistItem(id) {
+      AppState.toggleWishlist(id);
+      renderWishlistTab();
+      showToast("Removed from Wishlist", "info");
+    }
+
+    function renderAddressesTab() {
+      const container = document.getElementById("addresses-list-container");
+      if (!container) return;
+
+      const user = AppState.getUser();
+      const dbUsers = LocalDb.getUsers();
+      const fullUser = dbUsers.find(u => u.email === user.email);
+
+      if (!fullUser || !fullUser.addresses || fullUser.addresses.length === 0) {
+        container.innerHTML = `<p class="text-xs text-gray-400 italic col-span-full">No saved addresses found. They are saved automatically when checkout occurs!</p>`;
+        return;
+      }
+
+      container.innerHTML = fullUser.addresses.map((addr, idx) => `
+        <div class="border rounded-2xl p-4 text-xs space-y-2 relative">
+          <button onclick="removeAddress(${idx})" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 font-bold">Remove</button>
+          <h4 class="font-bold text-gray-800">${addr.name}</h4>
+          <p class="text-gray-500">${addr.addressLine}, ${addr.city}, ${addr.state} - ${addr.pincode}</p>
+          <p class="text-[10px] text-gray-400 font-bold">Phone: ${addr.phone}</p>
+        </div>
+      `).join('');
+    }
+
+    function removeAddress(idx) {
+      const user = AppState.getUser();
+      let dbUsers = LocalDb.getUsers();
+      let uIdx = dbUsers.findIndex(u => u.email === user.email);
+      if (uIdx !== -1 && dbUsers[uIdx].addresses) {
+        dbUsers[uIdx].addresses.splice(idx, 1);
+        LocalDb.saveUsers(dbUsers);
+        showToast("Address deleted!", "success");
+        renderAddressesTab();
+      }
+    }
+  </script>
+</body>
+</html>

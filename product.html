@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>उत्पाद विवरण | Marwadi Namkeen Details</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            saffron: {
+              50: '#fffbf0',
+              100: '#fffae0',
+              500: '#F28500',
+              600: '#E07B00',
+              700: '#C76D00',
+            },
+            brandred: {
+              50: '#fff5f5',
+              100: '#ffe3e3',
+              500: '#8B0000',
+              600: '#730000',
+              700: '#5C0000',
+            },
+            gold: {
+              500: '#D4AF37',
+              600: '#C59B27',
+              700: '#A37F1F',
+            },
+            dark: '#1A0D00'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="page-fade-in antialiased bg-gray-50/50">
+
+  <!-- Header Placeholder -->
+  <div id="header-placeholder"></div>
+
+  <!-- Breadcrumbs -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="text-xs text-gray-500 font-tiro">
+      <a href="index.html" class="hover:text-saffron-600">होम</a> &bull; 
+      <a href="shop.html" class="hover:text-saffron-600">शॉप</a> &bull; 
+      <span class="text-gray-800" id="crumb-product-name">Ratlami Sev</span>
+    </div>
+  </div>
+
+  <!-- Main Product Detail -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
+      
+      <!-- Left: Image Box -->
+      <div class="space-y-4">
+        <div class="border border-gray-100 rounded-2xl overflow-hidden aspect-video bg-gray-50 flex items-center justify-center">
+          <img id="product-main-img" src="" alt="" class="w-full h-full object-cover">
+        </div>
+        <!-- Gallery indicators (static beautiful view for visual excellence) -->
+        <div class="grid grid-cols-3 gap-4">
+          <div class="border border-gold-500 rounded-lg overflow-hidden h-20 bg-gray-50 cursor-pointer">
+            <img id="product-gal-1" src="" alt="Gallery Image 1" class="w-full h-full object-cover">
+          </div>
+          <div class="border border-gray-100 rounded-lg overflow-hidden h-20 bg-gray-50 cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+            <img id="product-gal-2" src="" alt="Gallery Image 2" class="w-full h-full object-cover filter brightness-95">
+          </div>
+          <div class="border border-gray-100 rounded-lg overflow-hidden h-20 bg-gray-50 cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+            <img id="product-gal-3" src="" alt="Gallery Image 3" class="w-full h-full object-cover filter sepia-[20%]">
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Content & Controls -->
+      <div class="space-y-6">
+        <div>
+          <span class="inline-block bg-saffron-50 text-saffron-600 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider" id="product-badge">SEV</span>
+          <h2 class="text-3xl font-extrabold font-tiro text-gray-800 mt-2" id="product-title">RATLAMI SEV</h2>
+          <div class="flex items-center space-x-2 mt-2">
+            <div class="flex text-gold-500 text-sm">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <span class="text-xs text-gray-400 font-semibold" id="review-count">(2 Reviews)</span>
+          </div>
+        </div>
+
+        <div class="border-y border-gray-100 py-4 flex items-center justify-between">
+          <div>
+            <span class="text-xs text-gray-400 block" data-t="price_kg">मूल्य प्रति किलो</span>
+            <div class="flex items-baseline space-x-2">
+              <span class="text-brandred-600 font-extrabold text-2xl" id="product-price">₹280</span>
+              <span class="text-sm text-gray-400 font-semibold">/ KG</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700">
+              ● In Stock
+            </span>
+          </div>
+        </div>
+
+        <p class="text-sm text-gray-600 leading-relaxed font-tiro" id="product-desc">
+          Description details go here.
+        </p>
+
+        <!-- Product Benefits list -->
+        <div class="space-y-2">
+          <h4 class="font-bold text-xs text-gray-700 uppercase tracking-widest">Product Benefits:</h4>
+          <ul class="text-xs text-gray-500 space-y-1.5 list-disc pl-5 font-tiro" id="product-benefits">
+            <!-- Populated via JS -->
+          </ul>
+        </div>
+
+        <!-- Controls (Weight & Qty) -->
+        <div class="space-y-4 pt-4 border-t border-gray-100">
+          <!-- Weight Selector (Starts at min 1 KG) -->
+          <div class="space-y-2">
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-widest" data-t="min_qty">न्यूनतम मात्रा: 1 किलो</label>
+            <div class="flex space-x-3" id="weight-selector-container">
+              <button onclick="setWeight(1)" id="w-btn-1" class="border-2 border-brandred-600 bg-brandred-50 text-brandred-600 font-bold text-xs px-4 py-2 rounded-xl transition-all">1 KG</button>
+              <button onclick="setWeight(2)" id="w-btn-2" class="border-2 border-gray-200 text-gray-600 hover:border-gray-300 font-bold text-xs px-4 py-2 rounded-xl transition-all">2 KG</button>
+              <button onclick="setWeight(5)" id="w-btn-5" class="border-2 border-gray-200 text-gray-600 hover:border-gray-300 font-bold text-xs px-4 py-2 rounded-xl transition-all">5 KG</button>
+            </div>
+          </div>
+
+          <!-- Qty Selector -->
+          <div class="flex items-center space-x-6">
+            <div class="space-y-1.5">
+              <label class="block text-[10px] font-bold text-gray-400 uppercase">Quantity (Units)</label>
+              <div class="flex items-center border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden">
+                <button onclick="updateQty(-1)" class="px-3 py-1.5 text-gray-500 hover:bg-gray-50 font-bold text-sm">-</button>
+                <span id="qty-val" class="px-4 font-bold text-xs">1</span>
+                <button onclick="updateQty(1)" class="px-3 py-1.5 text-gray-500 hover:bg-gray-50 font-bold text-sm">+</button>
+              </div>
+            </div>
+            
+            <div class="flex-grow pt-5">
+              <div class="text-right text-xs font-bold text-gray-500">
+                Total Price: <span class="text-brandred-600 text-lg" id="total-price-calc">₹280</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add To Cart / Buy Now CTAs -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+          <button onclick="handleAddToCart()" class="bg-saffron-500 hover:bg-saffron-600 text-white font-bold py-3.5 rounded-full shadow-lg text-sm transition-colors uppercase tracking-wider" data-t="add_to_cart">
+            कार्ट में जोड़ें
+          </button>
+          <button onclick="handleBuyNow()" class="bg-brandred-600 hover:bg-brandred-700 text-white font-bold py-3.5 rounded-full shadow-lg text-sm transition-colors uppercase tracking-wider" data-t="buy_now">
+            अभी खरीदें
+          </button>
+        </div>
+
+        <!-- Share Options & Wishlist -->
+        <div class="flex items-center justify-between pt-4 border-t border-gray-100 text-xs">
+          <button id="product-wishlist-btn" onclick="handleWishlistToggle()" class="flex items-center space-x-1 text-gray-500 hover:text-brandred-600 transition-colors font-bold">
+            <svg xmlns="http://www.w3.org/2000/svg" id="wishlist-heart-icon" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            <span data-t="wishlist">इच्छा-सूची</span>
+          </button>
+          <div class="flex items-center space-x-2">
+            <span class="text-gray-400 font-semibold">Share:</span>
+            <button onclick="shareOnWhatsApp()" class="text-green-500 font-semibold hover:underline">WhatsApp</button> |
+            <button onclick="copyProductLink()" class="text-saffron-600 font-semibold hover:underline">Copy Link</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="mt-12 bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-10 space-y-8">
+      <div class="border-b pb-4 flex justify-between items-center">
+        <h3 class="text-xl font-bold font-tiro text-brandred-600" data-t="verified_reviews">ग्राहकों की समीक्षाएं</h3>
+        <button onclick="toggleReviewForm()" class="text-xs font-bold text-saffron-500 hover:underline">Write Review</button>
+      </div>
+
+      <!-- Add Review Form (Hidden by default) -->
+      <form id="review-form" class="hidden bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-4 max-w-lg">
+        <h4 class="font-bold text-sm text-gray-800">Submit Your Review</h4>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1">Your Name</label>
+            <input type="text" id="rev-name" class="w-full border rounded-lg p-2 text-xs focus:outline-none focus:ring-1 focus:ring-saffron-500 bg-white" required>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1">Rating (1 to 5 Stars)</label>
+            <select id="rev-rating" class="w-full border rounded-lg p-2 text-xs focus:outline-none bg-white">
+              <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+              <option value="4">⭐⭐⭐⭐ (4/5)</option>
+              <option value="3">⭐⭐⭐ (3/5)</option>
+              <option value="2">⭐⭐ (2/5)</option>
+              <option value="1">⭐ (1/5)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1">Review Comments</label>
+          <textarea id="rev-text" rows="3" class="w-full border rounded-lg p-2 text-xs focus:outline-none bg-white" required></textarea>
+        </div>
+        <button type="submit" class="bg-saffron-500 text-white font-bold px-5 py-2 rounded-full text-xs hover:bg-saffron-600 transition-colors shadow-sm">Submit Review</button>
+      </form>
+
+      <!-- Review List -->
+      <div class="space-y-6" id="product-reviews-list">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    <div class="mt-16 space-y-8">
+      <h3 class="text-xl font-bold font-tiro text-brandred-600">आपको यह भी पसंद आ सकता है (Related Products)</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="related-products-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Placeholder -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script>
+    let currentProduct = null;
+    let selectedWeight = 1; // Default to 1 KG
+    let selectedQty = 1;
+
+    // Load URL Product ID
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get("id") || "ratlami-namkeen";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadProduct();
+      
+      // Hook up review form submit
+      const revForm = document.getElementById("review-form");
+      if (revForm) {
+        revForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const name = document.getElementById("rev-name").value.trim();
+          const rating = parseInt(document.getElementById("rev-rating").value);
+          const text = document.getElementById("rev-text").value.trim();
+          
+          if (currentProduct) {
+            let products = LocalDb.getProducts();
+            let idx = products.findIndex(p => p.id === currentProduct.id);
+            if (idx !== -1) {
+              products[idx].reviews.push({ name, rating, text });
+              LocalDb.saveProducts(products);
+              showToast("Review submitted successfully! समीक्षा दर्ज की गई।", "success");
+              revForm.reset();
+              revForm.classList.add("hidden");
+              loadProduct();
+            }
+          }
+        });
+      }
+    });
+
+    window.addEventListener("pageLanguageUpdated", () => {
+      loadProduct();
+    });
+
+    function loadProduct() {
+      const products = LocalDb.getProducts();
+      currentProduct = products.find(p => p.id === productId);
+
+      if (!currentProduct) {
+        window.location.href = "shop.html";
+        return;
+      }
+
+      const lang = AppState.getLang();
+      const pName = currentProduct.name[lang] || currentProduct.name["en"];
+      const pDesc = currentProduct.description[lang] || currentProduct.description["en"];
+
+      // Update basic fields
+      document.getElementById("crumb-product-name").textContent = pName;
+      document.title = `${pName} | Marwadi Namkeen Premium Product`;
+      document.getElementById("product-title").textContent = pName;
+      document.getElementById("product-desc").textContent = pDesc;
+      document.getElementById("product-price").textContent = `₹${currentProduct.pricePerKg}`;
+      document.getElementById("product-badge").textContent = AppState.t(currentProduct.category);
+      
+      // Update Images
+      document.getElementById("product-main-img").src = currentProduct.image;
+      document.getElementById("product-main-img").alt = pName;
+      document.getElementById("product-gal-1").src = currentProduct.image;
+      document.getElementById("product-gal-2").src = currentProduct.image;
+      document.getElementById("product-gal-3").src = currentProduct.image;
+
+      // Update benefits
+      const benefitsContainer = document.getElementById("product-benefits");
+      const benefitsList = currentProduct.benefits[lang] || currentProduct.benefits["en"] || [];
+      benefitsContainer.innerHTML = benefitsList.map(b => `<li>${b}</li>`).join('');
+
+      // Wishlist UI active styling
+      const isWishlisted = AppState.getWishlist().includes(currentProduct.id);
+      const wlIcon = document.getElementById("wishlist-heart-icon");
+      if (wlIcon) {
+        if (isWishlisted) {
+          wlIcon.classList.remove("text-gray-400");
+          wlIcon.classList.add("text-red-500", "fill-current");
+        } else {
+          wlIcon.classList.remove("text-red-500", "fill-current");
+          wlIcon.classList.add("text-gray-400");
+        }
+      }
+
+      // Render reviews
+      const reviewsContainer = document.getElementById("product-reviews-list");
+      document.getElementById("review-count").textContent = `(${currentProduct.reviews.length} Reviews)`;
+      if (currentProduct.reviews.length === 0) {
+        reviewsContainer.innerHTML = `<p class="text-xs text-gray-400 italic">No reviews yet. Be the first to write one!</p>`;
+      } else {
+        reviewsContainer.innerHTML = currentProduct.reviews.map(r => `
+          <div class="border-b pb-4 flex flex-col space-y-1 text-xs text-gray-600">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-gray-800">${r.name}</span>
+              <span class="text-gold-500">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+            </div>
+            <p class="font-tiro">${r.text}</p>
+          </div>
+        `).join('');
+      }
+
+      // Total calc price
+      updatePriceDisplay();
+      
+      // Render Related Products
+      renderRelatedProducts(products);
+    }
+
+    function setWeight(w) {
+      selectedWeight = w;
+      [1, 2, 5].forEach(val => {
+        const btn = document.getElementById(`w-btn-${val}`);
+        if (btn) {
+          if (val === w) {
+            btn.className = "border-2 border-brandred-600 bg-brandred-50 text-brandred-600 font-bold text-xs px-4 py-2 rounded-xl transition-all";
+          } else {
+            btn.className = "border-2 border-gray-200 text-gray-600 hover:border-gray-300 font-bold text-xs px-4 py-2 rounded-xl transition-all";
+          }
+        }
+      });
+      updatePriceDisplay();
+    }
+
+    function updateQty(change) {
+      selectedQty = Math.max(1, selectedQty + change);
+      document.getElementById("qty-val").textContent = selectedQty;
+      updatePriceDisplay();
+    }
+
+    function updatePriceDisplay() {
+      if (!currentProduct) return;
+      const total = currentProduct.pricePerKg * selectedWeight * selectedQty;
+      document.getElementById("total-price-calc").textContent = `₹${total}`;
+    }
+
+    function handleAddToCart() {
+      if (!currentProduct) return;
+      AppState.addToCart(currentProduct.id, selectedWeight, selectedQty);
+      showToast(AppState.getLang() === 'hi' ? "कार्ट में जोड़ा गया!" : "Added to Cart!", "success");
+    }
+
+    function handleBuyNow() {
+      if (!currentProduct) return;
+      AppState.addToCart(currentProduct.id, selectedWeight, selectedQty);
+      window.location.href = "cart.html";
+    }
+
+    function handleWishlistToggle() {
+      if (!currentProduct) return;
+      AppState.toggleWishlist(currentProduct.id);
+      loadProduct();
+      showToast(AppState.getLang() === 'hi' ? "इच्छा-सूची अपडेट की गई!" : "Wishlist Updated!", "success");
+    }
+
+    function toggleReviewForm() {
+      const f = document.getElementById("review-form");
+      if (f) f.classList.toggle("hidden");
+    }
+
+    function shareOnWhatsApp() {
+      if (!currentProduct) return;
+      const lang = AppState.getLang();
+      const text = `Hey! Check out this awesome traditional snack: ${currentProduct.name[lang]} from Marwadi Namkeen! %0A${window.location.href}`;
+      window.open(`https://wa.me/?text=${text}`, "_blank");
+    }
+
+    function copyProductLink() {
+      navigator.clipboard.writeText(window.location.href);
+      showToast(AppState.getLang() === 'hi' ? "लिंक कॉपी हो गया!" : "Link copied to clipboard!", "success");
+    }
+
+    function renderRelatedProducts(allProducts) {
+      const grid = document.getElementById("related-products-grid");
+      if (!grid) return;
+
+      const lang = AppState.getLang();
+      const related = allProducts.filter(p => p.id !== productId).slice(0, 4);
+
+      grid.innerHTML = related.map(p => {
+        const name = p.name[lang] || p.name["en"];
+        return `
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center hover:shadow-md transition-shadow">
+            <a href="product.html?id=${p.id}"><img src="${p.image}" alt="${name}" class="h-32 w-full object-cover rounded-xl mb-3"></a>
+            <a href="product.html?id=${p.id}" class="hover:text-saffron-600 transition-colors font-bold text-sm block font-tiro text-gray-800">${name}</a>
+            <span class="text-brandred-600 font-extrabold text-sm block mt-1">₹${p.pricePerKg} / KG</span>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>
